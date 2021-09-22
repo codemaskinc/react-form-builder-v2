@@ -1,0 +1,39 @@
+{
+    "name": "@codegateinc/react-form-builder-v2",
+    "author": "@codegate",
+    "license": "MIT",
+    "typings": "index.d.ts",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "scripts": {
+        "tsc": "node node_modules/typescript/bin/tsc",
+        "precommit": "concurrently 'tsc' 'yarn test' 'yarn build' && git add dist package.json",
+        "build": "tsdx build --format cjs,esm,umd",
+        "generate-types": "tsc --declaration"
+    },
+    "peerDependencies": {
+        "react": "^17.0.2"
+    },
+    "devDependencies": {
+        "@babel/cli": "7.15.7",
+        "@babel/core": "7.15.5",
+        "@babel/plugin-transform-react-jsx": "7.14.9",
+        "@babel/preset-typescript": "7.15.0",
+        "@types/react": "17.0.24",
+        "babel-plugin-module-resolver": "4.1.0",
+        "concurrently": "6.2.1",
+        "husky": "7.0.2",
+        "react": "17.0.2",
+        "tsdx": "0.14.1",
+        "typescript": "4.4.3"
+    },
+    "babel": {
+        "ignore": [
+            "src/types.ts"
+        ]
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/codegateinc/react-form-builder-v2.git"
+    }
+}
