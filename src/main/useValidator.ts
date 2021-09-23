@@ -1,11 +1,11 @@
-import { R } from 'lib/utils'
+import { isEmpty } from 'ramda'
 import { FormFieldLike } from 'main/types'
 
 export const useFormValidator = (formFields: Array<FormFieldLike>) => {
     const hasMissingOptions = formFields
-        .some(field => field.isRequired && R.isEmpty(field.value))
+        .some(field => field.isRequired && isEmpty(field.value))
     const hasError = formFields
-        .some(field => !R.isEmpty(field.errorMessage))
+        .some(field => !isEmpty(field.errorMessage))
 
     return {
         hasError: hasError || hasMissingOptions

@@ -5,7 +5,7 @@ type ValidationRule<T> = {
     validate(value: T): boolean
 }
 
-type GateField<T> = {
+type Field<T> = {
     value: T,
     key: string,
     label?: string,
@@ -33,7 +33,7 @@ type FieldConfig<T> = {
 }
 
 type UseFormReturn<T> = {
-    form: Record<keyof T, GateField<any>>,
+    form: Record<keyof T, Field<any>>,
     hasError: boolean,
     formHasChanges(): boolean,
     setError(field: keyof  T, errorMessage: string): void,
@@ -46,13 +46,14 @@ type FormGateCallbacks<T> = {
 }
 
 declare function useForm<T>(
-    formFields: Record<keyof T, GateField<any>>,
+    formFields: Record<keyof T, Field<any>>,
     callbacks: FormGateCallbacks<T>
 ): UseFormReturn<T>
 
-declare function useField<T>(props: FieldConfig<T>): GateField<T>
+declare function useField<T>(props: FieldConfig<T>): Field<T>
 
 export {
     useForm,
-    useField
+    useField,
+    Field
 }
