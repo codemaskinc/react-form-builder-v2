@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { isEmpty } from 'ramda'
 import { R } from 'lib/utils'
 import { GateField, FieldConfig, GateFieldState } from './types'
 
@@ -28,11 +29,11 @@ export function useField<T>({
             ? value
             : field.value) as T
 
-        if (isRequired && R.isEmpty(val)) {
+        if (isRequired && isEmpty(val)) {
             return validationRules[0].errorMessage
         }
 
-        if (!isRequired && R.isEmpty(val)) {
+        if (!isRequired && isEmpty(val)) {
             return ''
         }
 
@@ -85,6 +86,10 @@ export function useField<T>({
         setError: (errorMessage: string) => setField(prevState => ({
             ...prevState,
             errorMessage
+        })),
+        setField: (value: T) => setField(prevState => ({
+            ...prevState,
+            value
         }))
     }
 }
