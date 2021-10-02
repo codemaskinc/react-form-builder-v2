@@ -41,7 +41,8 @@ export type GateField<T> = {
     validateOnSubmit(): string,
     onChangeValue(newValue: T): void,
     submitParser?(value: T): T,
-    setError(errorMessage: string): void
+    setError(errorMessage: string): void,
+    setField(value: T): void
 }
 
 export type SinglePickerOption = {
