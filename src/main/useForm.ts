@@ -33,9 +33,12 @@ export function useForm<T>(
                 [field]: errorMessage
             }))
         },
-        setField: <S>(field: keyof T, value: S) => {
-            form[field].setField(value)
+        setField: (field: keyof T, value: any) => {
+            form[field].onChangeValue(value)
         },
+        resetForm: () => Object
+            .keys(form)
+            .forEach(key => (form[key] as GateField<any>).resetState()),
         submit: () => {
             const errors = Object
                 .values<GateField<any>>(form)

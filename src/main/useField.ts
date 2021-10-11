@@ -87,9 +87,11 @@ export function useField<T>({
             ...prevState,
             errorMessage
         })),
-        setField: (value: T) => setField(prevState => ({
+        resetState: () => setField(prevState => ({
             ...prevState,
-            value
+            isPristine: true,
+            errorMessage: '',
+            value: initialValue
         }))
     }
 }

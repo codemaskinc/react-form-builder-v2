@@ -17,7 +17,8 @@ type Field<T> = {
     validateOnSubmit(): string,
     onChangeValue(newValue: T): void,
     submitParser?(value: T): T,
-    setError(errorMessage: string): void
+    setError(errorMessage: string): void,
+    resetState(): void
 }
 
 type FieldConfig<T> = {
@@ -38,7 +39,8 @@ type UseFormReturn<T> = {
     formHasChanges(): boolean,
     setError(field: keyof  T, errorMessage: string): void,
     submit(): void,
-    setField<S>(field: keyof T, value: S): void
+    setField(field: keyof T, value: any): void,
+    resetForm(): void
 }
 
 type FormGateCallbacks<T> = {
