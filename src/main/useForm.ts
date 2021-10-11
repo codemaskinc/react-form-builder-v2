@@ -33,7 +33,7 @@ export function useForm<T>(
                 [field]: errorMessage
             }))
         },
-        setField: (field: keyof T, value: any) => {
+        setFieldValue: (field: keyof T, value: any) => {
             form[field].onChangeValue(value)
         },
         resetForm: () => Object

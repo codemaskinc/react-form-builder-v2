@@ -39,7 +39,7 @@ type UseFormReturn<T> = {
     formHasChanges(): boolean,
     setError(field: keyof  T, errorMessage: string): void,
     submit(): void,
-    setField(field: keyof T, value: any): void,
+    setFieldValue(field: keyof T, value: any): void,
     resetForm(): void
 }
 
