@@ -38,7 +38,7 @@ type UseFormReturn<T> = {
     formHasChanges(): boolean,
     setError(field: keyof  T, errorMessage: string): void,
     submit(): void,
-    setField(value: T): void
+    setField<S>(field: keyof T, value: S): void
 }
 
 type FormGateCallbacks<T> = {
