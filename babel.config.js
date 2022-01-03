@@ -7,8 +7,7 @@ module.exports = {
       {
         root: './',
         alias: {
-          "types": "./src/lib/types",
-          "utils": "./src/lib/utils"
+          "lib": "./src/lib"
         },
       },
     ],
