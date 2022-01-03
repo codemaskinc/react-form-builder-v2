@@ -3,7 +3,7 @@
     "author": "@codegate",
     "license": "MIT",
     "typings": "index.d.ts",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "main": "dist/index.js",
     "scripts": {
         "tsc": "node node_modules/typescript/bin/tsc",
