@@ -3,7 +3,7 @@ import { FormFieldLike } from 'main/types'
 
 export const useFormValidator = (formFields: Array<FormFieldLike>) => {
     const hasMissingOptions = formFields
-        .some(field => field.isRequired && isEmpty(field.value))
+        .some(field => field.isRequired && Boolean(field.value))
     const hasError = formFields
         .some(field => !isEmpty(field.errorMessage))
 
