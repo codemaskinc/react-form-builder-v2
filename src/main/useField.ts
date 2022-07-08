@@ -33,7 +33,7 @@ export function useField<T>({
             return validationRules[0].errorMessage
         }
 
-        if (!isRequired && isEmpty(val)) {
+        if (!isRequired && !Boolean(val)) {
             return ''
         }
 
