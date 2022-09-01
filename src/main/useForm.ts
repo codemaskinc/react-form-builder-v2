@@ -67,6 +67,9 @@ export function useForm<T>(
                 }), {}) as T
 
             callbacks.onSuccess(parsedForm)
-        }
+        },
+        validateAll: () => Object
+            .values<GateField<any>>(form)
+            .forEach(field => field.validate())
     }
 }
