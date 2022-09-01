@@ -29,7 +29,6 @@ type FieldConfig<T> = {
     placeholder?: string,
     validateOnBlur?: boolean,
     validationRules?: Array<ValidationRule<T>>,
-    dependencies?: Array<mixed>,
     liveParser?(value: T): T,
     submitParser?(value: T): T
 }
@@ -37,6 +36,7 @@ type FieldConfig<T> = {
 type UseFormReturn<T> = {
     form: Record<keyof T, Field<any>>,
     hasError: boolean,
+    validate: VoidFunction,
     formHasChanges(): boolean,
     setError(field: keyof  T, errorMessage: string): void,
     submit(): void,

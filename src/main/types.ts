@@ -19,7 +19,6 @@ export type FieldConfig<T> = {
     placeholder?: string,
     validateOnBlur?: boolean,
     validationRules?: Array<ValidationRule<T>>,
-    dependencies?: Array<any>,
     liveParser?(value: T): T,
     submitParser?(value: T): T
 }
@@ -39,6 +38,7 @@ export type GateField<T> = {
     placeholder?: string,
     errorMessage: string,
     onBlur: VoidFunction,
+    validate: VoidFunction,
     validateOnSubmit(): string,
     onChangeValue(newValue: T): void,
     submitParser?(value: T): T,

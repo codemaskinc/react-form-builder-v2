@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useState } from 'react'
 import { isEmpty } from 'ramda'
 import { R } from 'lib/utils'
 import { GateField, FieldConfig, GateFieldState } from './types'
@@ -11,7 +11,6 @@ export function useField<T>({
     isRequired,
     placeholder,
     validateOnBlur = false,
-    dependencies = [],
     liveParser,
     submitParser
 }: FieldConfig<T>): GateField<T> {
@@ -20,26 +19,6 @@ export function useField<T>({
         isPristine: true,
         errorMessage: ''
     })
-    const isFirstRender = useRef<boolean>(true)
-
-    useEffect(() => {
-        const areDependenciesSet = dependencies?.every(dependency => R.isDefined(dependency))
-
-        if (!areDependenciesSet) {
-            return
-        }
-
-        if (isFirstRender.current) {
-            isFirstRender.current = false
-
-            return
-        }
-
-        setField(prevState => ({
-            ...prevState,
-            errorMessage: computeErrorMessage(undefined, true)
-        }))
-    }, dependencies)
 
     const computeErrorMessage = (value?: T, forceCheck: boolean = false) => {
         if ((!forceCheck && field.isPristine) || !validationRules) {
@@ -113,6 +92,10 @@ export function useField<T>({
             isPristine: true,
             errorMessage: '',
             value: initialValue
+        })),
+        validate: () => setField(prevState => ({
+            ...prevState,
+            errorMessage: computeErrorMessage(undefined, true)
         }))
     }
 }
