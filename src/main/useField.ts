@@ -92,6 +92,10 @@ export function useField<T>({
             isPristine: true,
             errorMessage: '',
             value: initialValue
+        })),
+        validate: () => setField(prevState => ({
+            ...prevState,
+            errorMessage: computeErrorMessage(undefined, true)
         }))
     }
 }

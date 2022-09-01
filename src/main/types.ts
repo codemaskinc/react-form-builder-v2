@@ -38,6 +38,7 @@ export type GateField<T> = {
     placeholder?: string,
     errorMessage: string,
     onBlur: VoidFunction,
+    validate: VoidFunction,
     validateOnSubmit(): string,
     onChangeValue(newValue: T): void,
     submitParser?(value: T): T,

@@ -14,11 +14,12 @@ type Field<T> = {
     placeholder?: string,
     errorMessage: string,
     onBlur: VoidFunction,
+    resetState: VoidFunction,
+    validate: VoidFunction,
     validateOnSubmit(): string,
     onChangeValue(newValue: T): void,
     submitParser?(value: T): T,
-    setError(errorMessage: string): void,
-    resetState(): void
+    setError(errorMessage: string): void
 }
 
 type FieldConfig<T> = {
@@ -36,11 +37,12 @@ type FieldConfig<T> = {
 type UseFormReturn<T> = {
     form: Record<keyof T, Field<any>>,
     hasError: boolean,
+    resetForm: VoidFunction,
+    submit: VoidFunction,
+    validateAll: VoidFunction,
     formHasChanges(): boolean,
     setError(field: keyof  T, errorMessage: string): void,
-    submit(): void,
-    setFieldValue(field: keyof T, value: any): void,
-    resetForm(): void
+    setFieldValue(field: keyof T, value: any): void
 }
 
 type FormGateCallbacks<T> = {
