@@ -29,6 +29,7 @@ type FieldConfig<T> = {
     placeholder?: string,
     validateOnBlur?: boolean,
     validationRules?: Array<ValidationRule<T>>,
+    dependencies?: Array<mixed>,
     liveParser?(value: T): T,
     submitParser?(value: T): T
 }

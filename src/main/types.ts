@@ -19,6 +19,7 @@ export type FieldConfig<T> = {
     placeholder?: string,
     validateOnBlur?: boolean,
     validationRules?: Array<ValidationRule<T>>,
+    dependencies?: Array<any>,
     liveParser?(value: T): T,
     submitParser?(value: T): T
 }
