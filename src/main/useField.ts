@@ -54,7 +54,7 @@ export function useField<T>({
         value: field.value,
         hasChange: field.value !== initialValue,
         errorMessage: field.errorMessage,
-        onBlur: () => setField(prevState => ({
+        onBlur: () => validateOnBlur && setField(prevState => ({
             ...prevState,
             isPristine: false,
             errorMessage: computeErrorMessage(undefined, true)
