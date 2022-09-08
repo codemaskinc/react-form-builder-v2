@@ -42,6 +42,7 @@ export type GateField<T> = {
     validateOnSubmit(): string,
     onChangeValue(newValue: T): void,
     submitParser?(value: T): T,
+    onChangeInitialValue(value: T): void,
     resetState(): void,
     setError(errorMessage: string): void
 }
