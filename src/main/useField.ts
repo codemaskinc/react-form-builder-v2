@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { isEmpty } from 'ramda'
 import { R } from 'lib/utils'
 import { GateField, FieldConfig, GateFieldState } from './types'
@@ -14,8 +14,9 @@ export function useField<T>({
     liveParser,
     submitParser
 }: FieldConfig<T>): GateField<T> {
+    const [localInitialValue, setLocalInitialValue] = useState(initialValue)
     const [field, setField] = useState<GateFieldState<T>>({
-        value: initialValue,
+        value: localInitialValue,
         isPristine: true,
         errorMessage: ''
     })
@@ -52,7 +53,7 @@ export function useField<T>({
         placeholder,
         submitParser,
         value: field.value,
-        hasChange: field.value !== initialValue,
+        hasChange: field.value !== localInitialValue,
         errorMessage: field.errorMessage,
         onBlur: () => validateOnBlur && setField(prevState => ({
             ...prevState,
@@ -69,6 +70,16 @@ export function useField<T>({
                 : prevState.isPristine,
             errorMessage: computeErrorMessage(newValue)
         })),
+        onChangeInitialValue: (value: T) => {
+            if (field.value === localInitialValue) {
+                setField(prevState => ({
+                    ...prevState,
+                    value
+                }))
+            }
+
+            setLocalInitialValue(value)
+        },
         validateOnSubmit: () => {
             const errorMessage = computeErrorMessage(undefined, true)
 

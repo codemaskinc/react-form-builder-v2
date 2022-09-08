@@ -42,7 +42,8 @@ type UseFormReturn<T> = {
     validateAll: VoidFunction,
     formHasChanges(): boolean,
     setError(field: keyof  T, errorMessage: string): void,
-    setFieldValue(field: keyof T, value: any): void
+    setFieldValue(field: keyof T, value: any): void,
+    setFieldInitialValue(field: keyof T, value: any): void
 }
 
 type FormGateCallbacks<T> = {

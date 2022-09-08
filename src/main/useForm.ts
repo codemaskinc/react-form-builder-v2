@@ -36,6 +36,9 @@ export function useForm<T>(
         setFieldValue: (field: keyof T, value: any) => {
             form[field].onChangeValue(value)
         },
+        setFieldInitialValue: (field: keyof T, value: any) => {
+            form[field].onChangeInitialValue(value)
+        },
         resetForm: () => Object
             .keys(form)
             .forEach(key => (form[key] as GateField<any>).resetState()),
