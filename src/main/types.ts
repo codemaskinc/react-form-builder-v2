@@ -1,8 +1,9 @@
+import React from 'react'
 import { VoidFunction } from 'lib/types'
 
 export type ValidationRule<T> = {
     errorMessage: string,
-    validate(value: T): boolean
+    validate(value: T, state: Record<keyof T, GateField<any>>): boolean
 }
 
 export type GateFieldState<T> = {
@@ -18,6 +19,7 @@ export type FieldConfig<T> = {
     isRequired: boolean,
     placeholder?: string,
     validateOnBlur?: boolean,
+    stateRef: React.RefObject<Record<keyof T, GateField<any>>>
     validationRules?: Array<ValidationRule<T>>,
     liveParser?(value: T): T,
     submitParser?(value: T): T
@@ -44,7 +46,8 @@ export type GateField<T> = {
     submitParser?(value: T): T,
     onChangeInitialValue(value: T): void,
     resetState(): void,
-    setError(errorMessage: string): void
+    setError(errorMessage: string): void,
+    setRef(state: Record<keyof T, GateField<any>>): void
 }
 
 export type SinglePickerOption = {
