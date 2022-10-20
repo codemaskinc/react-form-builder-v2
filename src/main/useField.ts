@@ -1,12 +1,7 @@
-import { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { isEmpty } from 'ramda'
 import { R } from 'lib/utils'
 import { GateField, FieldConfig, GateFieldState } from './types'
-
-type ComputerErrorMessage<T> = {
-    value?: T,
-    forceCheck?: boolean
-}
 
 export function useField<T>({
     key,
@@ -19,7 +14,6 @@ export function useField<T>({
     liveParser,
     submitParser
 }: FieldConfig<T>): GateField<T> {
-    const stateRef = useRef<Record<keyof T, GateField<any>>>({} as Record<keyof T, GateField<any>>)
     const [localInitialValue, setLocalInitialValue] = useState(initialValue)
     const [field, setField] = useState<GateFieldState<T>>({
         value: localInitialValue,
@@ -27,7 +21,7 @@ export function useField<T>({
         errorMessage: ''
     })
 
-    const computeErrorMessage = ({ value, forceCheck = false }: ComputerErrorMessage<T>) => {
+    const computeErrorMessage = (value?: T, forceCheck: boolean = false) => {
         if ((!forceCheck && field.isPristine) || !validationRules) {
             return ''
         }
@@ -45,7 +39,7 @@ export function useField<T>({
         }
 
         const firstError = validationRules
-            .find(rule => !rule.validate(val, stateRef.current))
+            .find(rule => !rule.validate(val))
 
         return firstError
             ? firstError.errorMessage
@@ -64,10 +58,7 @@ export function useField<T>({
         onBlur: () => validateOnBlur && setField(prevState => ({
             ...prevState,
             isPristine: false,
-            errorMessage: computeErrorMessage({
-                value: undefined,
-                forceCheck: true
-            })
+            errorMessage: computeErrorMessage(undefined, true)
         })),
         onChangeValue: (newValue: T) => setField(prevState => ({
             ...prevState,
@@ -77,9 +68,7 @@ export function useField<T>({
             isPristine: prevState.isPristine
                 ? validateOnBlur
                 : prevState.isPristine,
-            errorMessage: computeErrorMessage({
-                value: newValue
-            })
+            errorMessage: computeErrorMessage(newValue)
         })),
         onChangeInitialValue: (value: T) => {
             if (field.value === localInitialValue) {
@@ -92,10 +81,7 @@ export function useField<T>({
             setLocalInitialValue(value)
         },
         validateOnSubmit: () => {
-            const errorMessage = computeErrorMessage({
-                value: undefined,
-                forceCheck: true
-            })
+            const errorMessage = computeErrorMessage(undefined, true)
 
             if (errorMessage) {
                 setField(prevState => ({
@@ -120,11 +106,7 @@ export function useField<T>({
         })),
         validate: () => setField(prevState => ({
             ...prevState,
-            errorMessage: computeErrorMessage({
-                value: undefined,
-                forceCheck: true
-            })
-        })),
-        setRef: (state: Record<keyof T, GateField<any>>) => stateRef.current = state
+            errorMessage: computeErrorMessage(undefined, true)
+        }))
     }
 }

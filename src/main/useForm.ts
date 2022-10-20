@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { R } from 'lib/utils'
 import { GateField } from './types'
 import { useFormValidator } from './useValidator'
@@ -20,13 +19,6 @@ export function useForm<T>(
         }), {}) as Record<keyof T, GateField<any>>
 
     const { hasError } = useFormValidator(Object.values(formFields))
-
-    useEffect(() => {
-        Object
-            .keys(form)
-            // @ts-ignore
-            .forEach(field => form[field as keyof T].setRef(form))
-    }, [form])
 
     return {
         form,

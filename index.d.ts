@@ -1,10 +1,8 @@
-import { GateField } from './src/main/types'
-
 type VoidFunction = () => void
 
 type ValidationRule<T> = {
     errorMessage: string,
-    validate(value: T, state: Record<keyof T, GateField<any>>): boolean
+    validate(value: T): boolean
 }
 
 type Field<T> = {
