@@ -23,6 +23,14 @@ export function useForm<T>(
     return {
         form,
         hasError,
+        isFilled: Object
+            .values<GateField<any>>(form)
+            .filter(item => item.isRequired)
+            .every(item => item.hasChange),
+        isEachFieldValid: !Object
+            .values<GateField<any>>(form)
+            .filter(item => item.isRequired)
+            .some(item => Boolean(item.errorMessage)),
         formHasChanges: () => Object
             .values<GateField<any>>(form)
             .some(field => field.hasChange),
