@@ -19,6 +19,7 @@ export type FieldConfig<T> = {
     placeholder?: string,
     validateOnBlur?: boolean,
     validationRules?: Array<ValidationRule<T>>,
+    children: Array<FieldConfig<T>>,
     liveParser?(value: T): T,
     submitParser?(value: T): T
 }
@@ -30,7 +31,7 @@ export type FormFieldLike = {
 }
 
 export type GateField<T> = {
-    value: T,
+    value: T | string,
     key: string,
     label?: string,
     isRequired: boolean,
@@ -39,6 +40,7 @@ export type GateField<T> = {
     errorMessage: string,
     onBlur: VoidFunction,
     validate: VoidFunction,
+    parentKey: string,
     validateOnSubmit(): string,
     onChangeValue(newValue: T): void,
     submitParser?(value: T): T,
@@ -51,3 +53,12 @@ export type SinglePickerOption = {
     key: string,
     value: any
 }
+
+export type ExtendedConfig<T> = GateField<T> & {
+    localInitialValue: T,
+    isPristine: boolean,
+    validationRules: Array<ValidationRule<T>>,
+    validateOnBlur: boolean
+}
+
+export type InnerForm<T> = Record<string, ExtendedConfig<T>>
