@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { R } from 'lib/utils'
-import { GateField } from './types'
+import { generateField } from './generateField'
 import { useFormValidator } from './useValidator'
+import { FieldConfig, GateField, InnerForm } from './types'
 
 type FormGateCallbacks<T> = {
     onSuccess(form: T): void,
@@ -11,14 +13,73 @@ export function useForm<T>(
     formFields: Record<keyof T, GateField<any>>,
     callbacks: FormGateCallbacks<T>
 ) {
-    const form = Object
+    const injectedForm = Object
         .entries(formFields)
         .reduce((acc, [key, value]) => ({
             ...acc,
             [key]: value
         }), {}) as Record<keyof T, GateField<any>>
+    const [innerForm, setInnerForm] = useState<InnerForm<T>>({} as InnerForm<T>)
 
     const { hasError } = useFormValidator(Object.values(formFields))
+    const form = {
+        ...injectedForm,
+        ...Object
+            .entries<GateField<any>>(innerForm)
+            .reduce((acc, [_, field]) => {
+                const fieldKeys = field.parentKey
+                    .split('.')
+                    .filter(Boolean)
+
+                if (fieldKeys.length > 0) {
+                    const mappedField = fieldKeys
+                        .reduce((localAcc, localKey, index) => ({
+                            ...acc,
+                            ...localAcc,
+                            [localKey]: {
+                                ...acc[localKey],
+                                ...(localAcc[localKey] || {}),
+                                ...(index === fieldKeys.length - 1 ? {
+                                    children: [
+                                        ...(localAcc[localKey]?.children || []),
+                                        field
+                                    ]
+                                } : {})
+                            }
+                        }), {})
+                    const removeEmptyObjects = Object
+                        .keys(mappedField)
+                        .filter(key => Object.keys(mappedField[key]).length)
+                        .reduce((acc, key) => ({
+                            ...acc,
+                            [key]: mappedField[key]
+                        }), {})
+
+                    return {
+                        ...acc,
+                        ...removeEmptyObjects
+                    }
+                }
+
+                return {
+                    ...acc,
+                    field
+                }
+            }, {})
+    }
+
+    const addFieldsRecurrence = (field: FieldConfig<any>, prevState: any, parentKey: string): any => {
+        if (field.children) {
+            return field.children.reduce((acc, child) => ({
+                ...acc,
+                ...addFieldsRecurrence(child, prevState, `${parentKey}.${field.key}`)
+            }), {})
+        }
+
+        return {
+            [field.key]: generateField(field, prevState, setInnerForm, parentKey)
+        }
+    }
 
     return {
         form,
@@ -47,6 +108,26 @@ export function useForm<T>(
         setFieldInitialValue: (field: keyof T, value: any) => {
             form[field].onChangeInitialValue(value)
         },
+        addFields: (fields: Array<FieldConfig<any>>) => setInnerForm(prevState => ({
+            ...prevState,
+            ...fields.reduce((acc, item) => ({
+                ...acc,
+                ...addFieldsRecurrence(item, prevState, '')
+            }), {})
+        })),
+        removeFieldIds: (fields: Array<string>) => setInnerForm(prevState => Object
+            .keys(prevState)
+            .reduce((acc, key) => {
+                if (fields.includes(key)) {
+                    return acc
+                }
+
+                return {
+                    ...acc,
+                    [key]: prevState[key]
+                }
+            }, {} as InnerForm<T>)
+        ),
         resetForm: () => Object
             .keys(form)
             .forEach(key => (form[key] as GateField<any>).resetState()),

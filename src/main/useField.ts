@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { isEmpty } from 'ramda'
 import { R } from 'lib/utils'
 import { GateField, FieldConfig, GateFieldState } from './types'
@@ -52,6 +52,7 @@ export function useField<T>({
         isRequired,
         placeholder,
         submitParser,
+        parentKey: '',
         value: field.value,
         hasChange: field.value !== localInitialValue,
         errorMessage: field.errorMessage,
