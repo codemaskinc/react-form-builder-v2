@@ -47,7 +47,7 @@ type UseFormReturn<T> = {
     setFieldValue(field: keyof T, value: any): void,
     setFieldInitialValue(field: keyof T, value: any): void,
     addFields(fields: Array<Field>): void,
-    removeFields(fields: Array<string>)
+    removeFieldIds(fields: Array<string>)
 }
 
 type FormGateCallbacks<T> = {

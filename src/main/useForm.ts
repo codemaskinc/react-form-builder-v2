@@ -115,7 +115,7 @@ export function useForm<T>(
                 ...addFieldsRecurrence(item, prevState, '')
             }), {})
         })),
-        removeFields: (fields: Array<string>) => setInnerForm(prevState => Object
+        removeFieldIds: (fields: Array<string>) => setInnerForm(prevState => Object
             .keys(prevState)
             .reduce((acc, key) => {
                 if (fields.includes(key)) {
