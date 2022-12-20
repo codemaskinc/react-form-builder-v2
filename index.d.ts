@@ -16,6 +16,7 @@ type Field<T> = {
     onBlur: VoidFunction,
     resetState: VoidFunction,
     validate: VoidFunction,
+    children?: Array<Field<T>>,
     validateOnSubmit(): string,
     onChangeValue(newValue: T): void,
     submitParser?(value: T): T,
