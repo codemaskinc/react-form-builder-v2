@@ -7,7 +7,7 @@ export function useField<T>({
     key,
     label,
     initialValue,
-    validationRules,
+    validationRules = [],
     isRequired,
     placeholder,
     validateOnBlur = false,
@@ -31,7 +31,7 @@ export function useField<T>({
             : field.value) as T
 
         if (isRequired && isEmpty(val)) {
-            return validationRules[0].errorMessage
+            return validationRules[0]?.errorMessage || 'this field cannot by empty'
         }
 
         if (!isRequired && !Boolean(val)) {
@@ -69,7 +69,7 @@ export function useField<T>({
             isPristine: prevState.isPristine
                 ? validateOnBlur
                 : prevState.isPristine,
-            errorMessage: computeErrorMessage(newValue)
+            errorMessage: computeErrorMessage(newValue, !validateOnBlur)
         })),
         onChangeInitialValue: (value: T) => {
             if (field.value === localInitialValue) {

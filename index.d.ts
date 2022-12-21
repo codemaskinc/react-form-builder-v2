@@ -39,7 +39,6 @@ type UseFormReturn<T> = {
     form: Record<keyof T, Field<any>>,
     hasError: boolean,
     isFilled: boolean,
-    isEachFieldValid: boolean,
     resetForm: VoidFunction,
     submit: VoidFunction,
     validateAll: VoidFunction,
