@@ -24,7 +24,7 @@ Create your own components and simply pass callbacks, errors, and values. You ca
 
 ### useField
 
-```
+```typescript
 type ValidationRule<T> = {
     errorMessage: string,
     validate(value: T): boolean
@@ -49,7 +49,7 @@ useField(config)
 
 #### validationRules example
 
-```
+```typescript
 validationRule: [
     {
         errorMessage: 'this field should be at least 2 chars',
@@ -60,7 +60,7 @@ validationRule: [
 
 ### useForm
 
-```
+```typescript
 const statesAndFunctions = useForm(config, callbacks)
 ```
 
@@ -85,7 +85,7 @@ const statesAndFunctions = useForm(config, callbacks)
 ### Basic
 
 Let's create our first component
-
+```typescript jsx
     import React from 'react'
     import { ReactSmartScroller } from '@codegateinc/react-form-builder-v2'
     
@@ -142,7 +142,7 @@ Let's create our first component
         border-radius: 20px;
         cursor: pointer;
     `
-
+```
 ## Contribution
 
 Library created by [Jacek Pudysz](https://github.com/jpudysz) and [Grzegorz Tarnopolski](https://github.com/gtarnopolski)
