@@ -11,9 +11,11 @@
         "build": "tsdx build --format cjs,esm,umd",
         "generate-types": "tsc --declaration"
     },
+    "dependencies": {
+        "ramda": "0.28.0"
+    },
     "peerDependencies": {
-        "react": "18.x.x",
-        "ramda": "^0.28.0"
+        "react": "18.x.x"
     },
     "devDependencies": {
         "@babel/cli": "7.19.3",

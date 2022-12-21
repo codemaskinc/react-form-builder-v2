@@ -4,9 +4,9 @@
 
 ## <a href='https://www.typescriptlang.org/'><img src='https://badges.frapsoft.com/typescript/code/typescript.png?v=101' alt='typescript' height=20/></a> <a href='http://opensource.org/licenses/MIT'><img src='http://img.shields.io/badge/license-MIT-brightgreen.svg' alt='MIT' /></a> <a href="https://badge.fury.io/js/@codegateinc%2Freact-form-builder-v2"><img src="https://badge.fury.io/js/@codegateinc%2Freact-form-builder-v2.svg" alt="npm version" height="18"></a>
 
-React-form-builder-v2 is a library that allows you to create highly customizable forms, rendering your own components, simply storing only the state. It works perfectly with ReactJS, React Native and monorepo ReactJS React Native
+React-form-builder-v2 is a library that allows you to create highly customizable forms by rendering your own components and simply storing the state. It works perfectly with ReactJS, React Native, and monorepo with React Native Web.
 
-Create your own components and simply pass callbacks, errors and value. In the useField you can store any type of value you want. It can be an string, boolean, number, array or even object.
+Create your own components and simply pass callbacks, errors, and values. You can store any type of value in the useField. It can be a string, boolean, number, array, or even an object.
 
 ### Features
 
@@ -18,7 +18,7 @@ Create your own components and simply pass callbacks, errors and value. In the u
 ### [Live demo](https://codesandbox.io/embed/focused-firefly-j96uom)
 
 ## Install
-`yarn add @codegateinc/react-form-builder-v2 ramda` or `npm install --save @codegateinc/react-form-builder-v2 ramda`
+`yarn add @codegateinc/react-form-builder-v2` or `npm install --save @codegateinc/react-form-builder-v2`
 
 ## Hooks
 
@@ -35,17 +35,28 @@ useField(config)
 
 #### useField config
 
-| Property        | Type                       | Description                                                                                       |
-|-----------------|----------------------------|---------------------------------------------------------------------------------------------------|
-|  key            | string                     | Default: `undefined`.<br> This field is required.                                                 |
-| label           | string                     | Default: `undefined`.<br> Label value that will be passed via field.                              |
-| initialValue    | generic (T)                | Default: `undefined`.<br> This field is required.                                                 |
-| isRequired      | boolean                    | Default: `false`.<br> Defines if the field is required and should be validated.                   |
-| placeholder     | string                     | Default: `undefined`.<br> Placeholder value that will be passed via field.                        |
-| validateOnBlur  | boolean                    | Default: `false`.<br> Defines if the field should be validated when blurred                       |
-| validationRules | Array<ValidationRule`<T>`> | Default: `undefined`.<br> Array of validation objects that will define if the field is valid      |
-| liveParser      | (value: T) => T            | Default: `undefined`.<br> Function that if defined, will be invoked everytime the value changes   |
-| submitParser    | (value: T) => T            | Default: `undefined`.<br> Function that if defined, will be invoked after submit function invoked |
+| Property        | Type                       | Description                                                                                                                               |
+|-----------------|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| key             | string                     | Default: `undefined`.<br> This field is required, must be a unique within whole form.                                                     |
+| label           | string                     | Default: `undefined`.<br> The label value that will be passed through the field.                                                          |
+| initialValue    | generic (T)                | Default: `undefined`.<br> This field is required. This will define the initial value of the field.                                        |
+| isRequired      | boolean                    | Default: `false`.<br> Defines if the field is required and should be mandatory. With `validation rules` it can be additionally validated. |
+| placeholder     | string                     | Default: `undefined`.<br> Placeholder value that will be passed via the field                                                             |
+| validateOnBlur  | boolean                    | Default: `false`.<br> Defines if the field should be validated when blurred. This field is required only for text inputs.                 |
+| validationRules | Array<ValidationRule`<T>`> | Default: `undefined`.<br> Array of validation objects that will define if the field is valid                                              |
+| liveParser      | (value: T) => T            | Default: `undefined`.<br> Function that, if defined, will be invoked every time the value changes.                                        |
+| submitParser    | (value: T) => T            | Default: `undefined`.<br> Function that, if defined, will be invoked after the submit function is invoked.                                |
+
+#### validationRules example
+
+```
+validationRule: [
+    {
+        errorMessage: 'this field should be at least 2 chars',
+        validate: (value: string) => value.length >= 2
+    }
+]
+```
 
 ### useForm
 
@@ -53,21 +64,21 @@ useField(config)
 const statesAndFunctions = useForm(config, callbacks)
 ```
 
-#### statesAndFunctions
-| Property             | Type                                        | Description                                                                                                                                             |
-|----------------------|---------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| form                 | Record<string, T>                           | Form with all values.                                                                                                                                   |
-| hasError             | boolean                                     | Defines if form got an error.                                                                                                                           |
-| isFilled             | boolean                                     | Defines if all fields did change.                                                                                                                       |
-| formHasChanges       | () => boolean                               | Returns boolean that indicates if any field did change.                                                                                                 |
-| setError             | (key: string, errorMessage: string) => void | Sets error to a field, even if the field is valid. After re-validation this error disappears.                                                           |
-| setFieldValue        | (key: string, value: T) => void             | Sets field value.                                                                                                                                       |
-| setFieldInitialValue | (key: string, initialValue: string) => void | Sets initial value of a field. This function will change the value too if it was not changed yet.                                                       |
-| addFields            | (fields: Array`<Field<any>>`) => void       | Adds new fields to the form. It allows users to create recurring forms or to add new fields during the runtime.                                         |
-| removeFieldIds       | (ids: Array`<string>`) => void              | Removes fields from the form at a runtime. Deletes only fields that were added with `addFields` function. Fields passed in by config cannot be removed. |
-| resetForm            | () => void                                  | Resets form to initial values.                                                                                                                          |
-| submit               | () => void                                  | Submits form, validating all the fields that are required.                                                                                              |
-| validateAll          | () => void                                  | Validates all fields.                                                                                                                                   |
+#### States and functions
+| Property             | Type                                        | Description                                                                                                                                                      |
+|----------------------|---------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| form                 | Record<string, T>                           | Form with all values.                                                                                                                                            |
+| hasError             | boolean                                     | Indicates if the form has an error.                                                                                                                              |
+| isFilled             | boolean                                     | Determines whether or not all fields have changed.                                                                                                               |
+| formHasChanges       | () => boolean                               | Returns a boolean indicating whether any fields have changed.                                                                                                    |
+| setError             | (key: string, errorMessage: string) => void | Sets an error to a field, even if the field is valid. After revalidation, this error disappears. It can be useful for server-side validation.                    |
+| setFieldValue        | (key: string, value: T) => void             | Sets the field value.                                                                                                                                            |
+| setFieldInitialValue | (key: string, initialValue: string) => void | Sets a field's initial value. The value of the field will change if it is pristine.                                                                              |
+| addFields            | (fields: Array`<Field<any>>`) => void       | Adds new fields to the form. It allows users to create recurring forms or add new fields during runtime.                                                         |
+| removeFieldIds       | (ids: Array`<string>`) => void              | Removes fields from the form at runtime. Deletes only fields that were added with the "addFields" function. Fields passed in by configuration cannot be removed. |
+| resetForm            | () => void                                  | Resets all fields and forms to their initial values and states.                                                                                                  |
+| submit               | () => void                                  | Submits the form, validating all the fields that are required.                                                                                                   |
+| validateAll          | () => void                                  | Validates all fields.                                                                                                                                            |
 
 ## Usage
 
@@ -132,13 +143,6 @@ Let's create our first component
         cursor: pointer;
     `
 
-
-This is what you'll see in your browser:
-
-<p align="center">
-  <img src="https://cdn.codegate.pl/react-form-builder-v2/base-view.png" />
-</p>
-
 ## Contribution
 
-Library created by Jacek Pudysz and Grzegorz Tarnopolski
+Library created by [Jacek Pudysz](https://github.com/jpudysz) and [Grzegorz Tarnopolski](https://github.com/gtarnopolski)
