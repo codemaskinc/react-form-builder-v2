@@ -42,7 +42,7 @@ useField(config)
 | initialValue    | generic (T)                | Default: `undefined`.<br> This field is required. This will define the initial value of the field.                                        |
 | isRequired      | boolean                    | Default: `false`.<br> Defines if the field is required and should be mandatory. With `validation rules` it can be additionally validated. |
 | placeholder     | string                     | Default: `undefined`.<br> Placeholder value that will be passed via the field                                                             |
-| validateOnBlur  | boolean                    | Default: `false`.<br> Defines if the field should be validated when blurred. This field is required only for text inputs.                 |
+| validateOnBlur  | boolean                    | Default: `false`.<br> Defines if the field should be validated when blurred. If false, validation will be checked on each change.         |
 | validationRules | Array<ValidationRule`<T>`> | Default: `undefined`.<br> Array of validation objects that will define if the field is valid                                              |
 | liveParser      | (value: T) => T            | Default: `undefined`.<br> Function that, if defined, will be invoked every time the value changes.                                        |
 | submitParser    | (value: T) => T            | Default: `undefined`.<br> Function that, if defined, will be invoked after the submit function is invoked.                                |
