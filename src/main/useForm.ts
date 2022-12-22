@@ -20,8 +20,6 @@ export function useForm<T>(
             [key]: value
         }), {}) as Record<keyof T, GateField<any>>
     const [innerForm, setInnerForm] = useState<InnerForm<T>>({} as InnerForm<T>)
-
-    const { hasError } = useFormValidator(Object.values(formFields))
     const form = {
         ...injectedForm,
         ...Object
@@ -68,6 +66,11 @@ export function useForm<T>(
             }, {})
     }
 
+    const hasError = Object
+        .values<GateField<any>>(form)
+        .filter(item => item.isRequired)
+        .some(item => Boolean(item.errorMessage))
+
     const addFieldsRecurrence = (field: FieldConfig<any>, prevState: any, parentKey: string): any => {
         if (field.children) {
             return field.children.reduce((acc, child) => ({
@@ -88,10 +91,6 @@ export function useForm<T>(
             .values<GateField<any>>(form)
             .filter(item => item.isRequired)
             .every(item => item.hasChange),
-        isEachFieldValid: !Object
-            .values<GateField<any>>(form)
-            .filter(item => item.isRequired)
-            .some(item => Boolean(item.errorMessage)),
         formHasChanges: () => Object
             .values<GateField<any>>(form)
             .some(field => field.hasChange),
