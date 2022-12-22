@@ -6,20 +6,21 @@ export type ValidationRule<T> = {
 }
 
 export type GateFieldState<T> = {
-    value: T,
+    value: T | string,
     isPristine: boolean,
-    errorMessage: string
+    errorMessage: string,
+    hasError: boolean
 }
 
 export type FieldConfig<T> = {
     key: string,
     label?: string,
-    initialValue: T,
-    isRequired: boolean,
+    initialValue?: T,
+    isRequired?: boolean,
     placeholder?: string,
     validateOnBlur?: boolean,
     validationRules?: Array<ValidationRule<T>>,
-    children: Array<FieldConfig<T>>,
+    children?: Array<FieldConfig<T>>,
     liveParser?(value: T): T,
     submitParser?(value: T): T
 }
@@ -27,6 +28,11 @@ export type FieldConfig<T> = {
 export type FormFieldLike = {
     value: any,
     isRequired: boolean,
+    errorMessage: string
+}
+
+type ValidateOnSubmitProps = {
+    hasError: boolean,
     errorMessage: string
 }
 
@@ -41,7 +47,8 @@ export type GateField<T> = {
     onBlur: VoidFunction,
     validate: VoidFunction,
     parentKey: string,
-    validateOnSubmit(): string,
+    hasError: boolean,
+    validateOnSubmit(): ValidateOnSubmitProps,
     onChangeValue(newValue: T): void,
     submitParser?(value: T): T,
     onChangeInitialValue(value: T): void,

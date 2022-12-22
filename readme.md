@@ -4,7 +4,7 @@
 
 ## <a href='https://www.typescriptlang.org/'><img src='https://badges.frapsoft.com/typescript/code/typescript.png?v=101' alt='typescript' height=20/></a> <a href='http://opensource.org/licenses/MIT'><img src='http://img.shields.io/badge/license-MIT-brightgreen.svg' alt='MIT' /></a> <a href="https://badge.fury.io/js/@codegateinc%2Freact-form-builder-v2"><img src="https://badge.fury.io/js/@codegateinc%2Freact-form-builder-v2.svg" alt="npm version" height="18"></a>
 
-React-form-builder-v2 is a library that allows you to create highly customizable forms by rendering your own components and simply storing the state. It works perfectly with ReactJS, React Native, and monorepo with React Native Web.
+React-form-builder-v2 is a library that allows you to create highly customizable forms by rendering your own components and storing the state. It works perfectly with ReactJS, React Native, and monorepo with React Native Web.
 
 Create your own components and simply pass callbacks, errors, and values. You can store any type of value in the useField. It can be a string, boolean, number, array, or even an object.
 
@@ -46,6 +46,7 @@ useField(config)
 | validationRules | Array<ValidationRule`<T>`> | Default: `undefined`.<br> Array of validation objects that will define if the field is valid                                              |
 | liveParser      | (value: T) => T            | Default: `undefined`.<br> Function that, if defined, will be invoked every time the value changes.                                        |
 | submitParser    | (value: T) => T            | Default: `undefined`.<br> Function that, if defined, will be invoked after the submit function is invoked.                                |
+| hasError        | boolean                    | Default: `false`.<br> This value indicates if the field has an error.                                                                     |
 
 #### validationRules example
 

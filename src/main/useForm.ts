@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { R } from 'lib/utils'
 import { generateField } from './generateField'
-import { useFormValidator } from './useValidator'
 import { FieldConfig, GateField, InnerForm } from './types'
 
 type FormGateCallbacks<T> = {
@@ -133,10 +132,14 @@ export function useForm<T>(
         submit: () => {
             const errors = Object
                 .values<GateField<any>>(form)
-                .map(field => ({
-                    key: field.key,
-                    errorMessage: field.validateOnSubmit()
-                }))
+                .map(field => {
+                    const { hasError, errorMessage } = field.validateOnSubmit()
+
+                    return {
+                        key: field.key,
+                        errorMessage: errorMessage || (hasError ? 'This field is required' : '')
+                    }
+                })
                 .filter(field => Boolean(field.errorMessage))
                 .reduce((acc, { key, errorMessage}) => ({
                     ...acc,
