@@ -8,7 +8,7 @@ export function useField<T>({
     label,
     initialValue,
     validationRules = [],
-    isRequired,
+    isRequired = false,
     placeholder,
     validateOnBlur = false,
     liveParser,
@@ -16,14 +16,18 @@ export function useField<T>({
 }: FieldConfig<T>): GateField<T> {
     const [localInitialValue, setLocalInitialValue] = useState(initialValue)
     const [field, setField] = useState<GateFieldState<T>>({
-        value: localInitialValue,
+        value: localInitialValue || '',
         isPristine: true,
-        errorMessage: ''
+        errorMessage: '',
+        hasError: false
     })
 
     const computeErrorMessage = (value?: T, forceCheck: boolean = false) => {
         if ((!forceCheck && field.isPristine) || !validationRules) {
-            return ''
+            return {
+                errorMessage: '',
+                hasError: false
+            }
         }
 
         const val = (R.isDefined(value)
@@ -31,19 +35,28 @@ export function useField<T>({
             : field.value) as T
 
         if (isRequired && isEmpty(val)) {
-            return validationRules[0]?.errorMessage || 'this field cannot by empty'
+            return {
+                errorMessage: validationRules[0]?.errorMessage,
+                hasError: true
+            }
         }
 
         if (!isRequired && !Boolean(val)) {
-            return ''
+            return {
+                errorMessage: '',
+                hasError: false
+            }
         }
 
         const firstError = validationRules
             .find(rule => !rule.validate(val))
 
-        return firstError
-            ? firstError.errorMessage
-            : ''
+        return {
+            errorMessage: firstError
+                ? firstError.errorMessage
+                : '',
+            hasError: Boolean(firstError?.errorMessage)
+        }
     }
 
     return {
@@ -53,24 +66,37 @@ export function useField<T>({
         placeholder,
         submitParser,
         parentKey: '',
+        hasError: field.hasError,
         value: field.value,
         hasChange: field.value !== localInitialValue,
         errorMessage: field.errorMessage,
-        onBlur: () => validateOnBlur && setField(prevState => ({
-            ...prevState,
-            isPristine: false,
-            errorMessage: computeErrorMessage(undefined, true)
-        })),
-        onChangeValue: (newValue: T) => setField(prevState => ({
-            ...prevState,
-            value: liveParser
-                ? liveParser(newValue)
-                : newValue,
-            isPristine: prevState.isPristine
-                ? validateOnBlur
-                : prevState.isPristine,
-            errorMessage: computeErrorMessage(newValue, !validateOnBlur)
-        })),
+        onBlur: () => {
+            if (validateOnBlur) {
+                const { errorMessage, hasError } = computeErrorMessage(undefined, true)
+
+                setField(prevState => ({
+                    ...prevState,
+                    isPristine: false,
+                    errorMessage,
+                    hasError
+                }))
+            }
+        },
+        onChangeValue: (newValue: T) => {
+            const { hasError, errorMessage } = computeErrorMessage(newValue, !validateOnBlur)
+
+            setField(prevState => ({
+                ...prevState,
+                value: liveParser
+                    ? liveParser(newValue)
+                    : newValue,
+                isPristine: prevState.isPristine
+                    ? validateOnBlur
+                    : prevState.isPristine,
+                errorMessage,
+                hasError
+            }))
+        },
         onChangeInitialValue: (value: T) => {
             if (field.value === localInitialValue) {
                 setField(prevState => ({
@@ -82,18 +108,18 @@ export function useField<T>({
             setLocalInitialValue(value)
         },
         validateOnSubmit: () => {
-            const errorMessage = computeErrorMessage(undefined, true)
+            const { hasError, errorMessage } = computeErrorMessage(undefined, true)
 
-            if (errorMessage) {
-                setField(prevState => ({
-                    ...prevState,
-                    errorMessage
-                }))
+            setField(prevState => ({
+                ...prevState,
+                errorMessage,
+                hasError
+            }))
 
-                return errorMessage
+            return {
+                hasError,
+                errorMessage
             }
-
-            return ''
         },
         setError: (errorMessage: string) => setField(prevState => ({
             ...prevState,
@@ -103,11 +129,16 @@ export function useField<T>({
             ...prevState,
             isPristine: true,
             errorMessage: '',
-            value: initialValue
+            value: initialValue || ''
         })),
-        validate: () => setField(prevState => ({
-            ...prevState,
-            errorMessage: computeErrorMessage(undefined, true)
-        }))
+        validate: () => {
+            const { hasError, errorMessage } = computeErrorMessage(undefined, true)
+
+            setField(prevState => ({
+                ...prevState,
+                errorMessage,
+                hasError
+            }))
+        }
     }
 }

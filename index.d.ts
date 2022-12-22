@@ -17,6 +17,7 @@ type Field<T> = {
     resetState: VoidFunction,
     validate: VoidFunction,
     children?: Array<Field<T>>,
+    hasError: boolean,
     validateOnSubmit(): string,
     onChangeValue(newValue: T): void,
     submitParser?(value: T): T,
@@ -65,5 +66,6 @@ declare function useField<T>(props: FieldConfig<T>): Field<T>
 export {
     useForm,
     useField,
-    Field
+    Field,
+    UseFormReturn
 }

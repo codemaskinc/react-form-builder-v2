@@ -11,7 +11,10 @@ export const generateField = <T>(
 ): ExtendedConfig<T> => {
     const computeErrorMessage = (field: ExtendedConfig<T>, value?: T, forceCheck: boolean = false) => {
         if ((!forceCheck && field.isPristine) || !field.validationRules) {
-            return ''
+            return {
+                errorMessage: '',
+                hasError: false
+            }
         }
 
         const val = (R.isDefined(value)
@@ -19,19 +22,28 @@ export const generateField = <T>(
             : field.value) as T
 
         if (field.isRequired && isEmpty(val)) {
-            return field.validationRules[0].errorMessage
+            return {
+                errorMessage: field.validationRules[0]?.errorMessage,
+                hasError: true
+            }
         }
 
         if (!field.isRequired && !Boolean(val)) {
-            return ''
+            return {
+                errorMessage: '',
+                hasError: false
+            }
         }
 
         const firstError = field.validationRules
             .find(rule => !rule.validate(val))
 
-        return firstError
-            ? firstError.errorMessage
-            : ''
+        return {
+            errorMessage: firstError
+                ? firstError.errorMessage
+                : '',
+            hasError: Boolean(firstError?.errorMessage)
+        }
     }
 
     return {
@@ -40,6 +52,7 @@ export const generateField = <T>(
         hasChange: false,
         isPristine: true,
         parentKey,
+        hasError: prevState[fieldConfig.key].hasError,
         isRequired: fieldConfig.isRequired || false,
         validateOnBlur: fieldConfig.validateOnBlur || false,
         localInitialValue: (fieldConfig.initialValue || '') as T,
@@ -56,38 +69,48 @@ export const generateField = <T>(
                     : prevState[fieldConfig.key].isPristine
             }
 
+            const { errorMessage, hasError } = computeErrorMessage(changedField, value)
+
             return {
                 ...prevState,
                 [fieldConfig.key]: {
                     ...changedField,
-                    errorMessage: computeErrorMessage(changedField, value)
+                    errorMessage,
+                    hasError
                 }
             }
         }),
-        onBlur: () => fieldConfig.validateOnBlur && setState(prevState => ({
-            ...prevState,
-            [fieldConfig.key]: {
-                ...prevState[fieldConfig.key],
-                isPristine: false,
-                errorMessage: computeErrorMessage(prevState[fieldConfig.key], undefined, true)
-            }
-        })),
-        validateOnSubmit: () => {
-            const errorMessage = computeErrorMessage(prevState[fieldConfig.key], undefined, true)
+        onBlur: () => {
+            if (fieldConfig.validateOnBlur) {
+                const { errorMessage, hasError } = computeErrorMessage(prevState[fieldConfig.key], undefined, true)
 
-            if (errorMessage) {
                 setState(prevState => ({
                     ...prevState,
                     [fieldConfig.key]: {
                         ...prevState[fieldConfig.key],
-                        errorMessage
+                        isPristine: false,
+                        errorMessage,
+                        hasError
                     }
                 }))
-
-                return errorMessage
             }
+        },
+        validateOnSubmit: () => {
+            const { errorMessage, hasError } = computeErrorMessage(prevState[fieldConfig.key], undefined, true)
 
-            return ''
+            setState(prevState => ({
+                ...prevState,
+                [fieldConfig.key]: {
+                    ...prevState[fieldConfig.key],
+                    errorMessage,
+                    hasError
+                }
+            }))
+
+            return {
+                errorMessage,
+                hasError
+            }
         },
         onChangeInitialValue: (value: T) => {
             if (prevState.value === prevState.localInitialValue) {
@@ -117,12 +140,17 @@ export const generateField = <T>(
                 value: fieldConfig.initialValue || ''
             }
         })),
-        validate: () => setState(prevState => ({
-            ...prevState,
-            [fieldConfig.key]: {
-                ...prevState[fieldConfig.key],
-                errorMessage: computeErrorMessage(prevState[fieldConfig.key], undefined, true)
-            }
-        }))
+        validate: () => {
+            const { hasError, errorMessage } = computeErrorMessage(prevState[fieldConfig.key], undefined, true)
+
+            setState(prevState => ({
+                ...prevState,
+                [fieldConfig.key]: {
+                    ...prevState[fieldConfig.key],
+                    errorMessage,
+                    hasError
+                }
+            }))
+        }
     } as ExtendedConfig<T>
 }
