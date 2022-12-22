@@ -137,7 +137,7 @@ export function useForm<T>(
 
                     return {
                         key: field.key,
-                        errorMessage: errorMessage || (hasError ? 'empty' : '')
+                        errorMessage: errorMessage || (hasError ? 'This field is required' : '')
                     }
                 })
                 .filter(field => Boolean(field.errorMessage))
