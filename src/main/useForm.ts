@@ -89,7 +89,7 @@ export function useForm<T>(
         isFilled: Object
             .values<GateField<any>>(form)
             .filter(item => item.isRequired)
-            .every(item => item.hasChange),
+            .every(Boolean),
         formHasChanges: () => Object
             .values<GateField<any>>(form)
             .some(field => field.hasChange),
