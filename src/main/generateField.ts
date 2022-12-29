@@ -52,7 +52,7 @@ export const generateField = <T>(
         hasChange: false,
         isPristine: true,
         parentKey,
-        hasError: prevState[fieldConfig.key].hasError,
+        hasError: prevState[fieldConfig.key]?.hasError,
         isRequired: fieldConfig.isRequired || false,
         validateOnBlur: fieldConfig.validateOnBlur || false,
         localInitialValue: (fieldConfig.initialValue || '') as T,
@@ -64,7 +64,7 @@ export const generateField = <T>(
                     ? fieldConfig.liveParser(value)
                     : value,
                 hasChange: value !== prevState[fieldConfig.key]?.localInitialValue,
-                isPristine: prevState[fieldConfig.key].isPristine
+                isPristine: prevState[fieldConfig.key]?.isPristine
                     ? fieldConfig.validateOnBlur || false
                     : prevState[fieldConfig.key].isPristine
             }
