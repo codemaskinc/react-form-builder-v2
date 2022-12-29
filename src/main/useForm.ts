@@ -1,8 +1,8 @@
 import { useState } from 'react'
+import { isEmpty } from 'ramda'
 import { R } from 'lib/utils'
 import { generateField } from './generateField'
 import { FieldConfig, GateField, InnerForm } from './types'
-import { isEmpty } from 'ramda'
 
 type FormGateCallbacks<T> = {
     onSuccess(form: T): void,
