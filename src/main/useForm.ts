@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { isEmpty } from 'ramda'
 import { R } from 'lib/utils'
 import { generateField } from './generateField'
 import { FieldConfig, GateField, InnerForm } from './types'
@@ -89,7 +90,7 @@ export function useForm<T>(
         isFilled: Object
             .values<GateField<any>>(form)
             .filter(item => item.isRequired)
-            .every(Boolean),
+            .every(item => !isEmpty(item.value)),
         formHasChanges: () => Object
             .values<GateField<any>>(form)
             .some(field => field.hasChange),
