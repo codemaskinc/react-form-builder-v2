@@ -24,7 +24,7 @@ export function useForm<T>(
         ...injectedForm,
         ...Object
             .entries<GateField<any>>(innerForm)
-            .reduce((acc, [_, field]) => {
+            .reduce((acc, [key, field]) => {
                 const fieldKeys = field.parentKey
                     .split('.')
                     .filter(Boolean)
@@ -61,7 +61,7 @@ export function useForm<T>(
 
                 return {
                     ...acc,
-                    field
+                    [key]: field
                 }
             }, {})
     }
