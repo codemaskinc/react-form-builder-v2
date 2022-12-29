@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { R } from 'lib/utils'
 import { generateField } from './generateField'
 import { FieldConfig, GateField, InnerForm } from './types'
+import { isEmpty } from 'ramda'
 
 type FormGateCallbacks<T> = {
     onSuccess(form: T): void,
@@ -89,7 +90,7 @@ export function useForm<T>(
         isFilled: Object
             .values<GateField<any>>(form)
             .filter(item => item.isRequired)
-            .every(Boolean),
+            .every(item => item.hasChange || !isEmpty(item.value)),
         formHasChanges: () => Object
             .values<GateField<any>>(form)
             .some(field => field.hasChange),
