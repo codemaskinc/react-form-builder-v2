@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { isEmpty } from 'ramda'
 import { R } from 'lib/utils'
 import { generateField } from './generateField'
@@ -20,6 +20,7 @@ export function useForm<T>(
             [key]: value
         }), {}) as Record<keyof T, GateField<any>>
     const [innerForm, setInnerForm] = useState<InnerForm<T>>({} as InnerForm<T>)
+    const innerFormRef = useRef(innerForm)
     const form = {
         ...injectedForm,
         ...Object
@@ -71,18 +72,22 @@ export function useForm<T>(
         .filter(item => item.isRequired)
         .some(item => Boolean(item.errorMessage))
 
-    const addFieldsRecurrence = (field: FieldConfig<any>, prevState: any, parentKey: string): any => {
+    const addFieldsRecurrence = (field: FieldConfig<any>, parentKey: string): any => {
         if (field.children) {
             return field.children.reduce((acc, child) => ({
                 ...acc,
-                ...addFieldsRecurrence(child, prevState, `${parentKey}.${field.key}`)
+                ...addFieldsRecurrence(child, `${parentKey}.${field.key}`)
             }), {})
         }
 
         return {
-            [field.key]: generateField(field, prevState, setInnerForm, parentKey)
+            [field.key]: generateField(field, innerFormRef, setInnerForm, parentKey)
         }
     }
+
+    useEffect(() => {
+        innerFormRef.current = innerForm
+    }, [innerForm])
 
     return {
         form,
@@ -111,7 +116,7 @@ export function useForm<T>(
             ...prevState,
             ...fields.reduce((acc, item) => ({
                 ...acc,
-                ...addFieldsRecurrence(item, prevState, '')
+                ...addFieldsRecurrence(item, '')
             }), {})
         })),
         removeFieldIds: (fields: Array<string>) => setInnerForm(prevState => Object
