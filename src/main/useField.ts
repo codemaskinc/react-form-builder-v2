@@ -41,7 +41,7 @@ export function useField<T>({
             }
         }
 
-        if (!isRequired && !Boolean(val)) {
+        if (!isRequired && !Boolean(val) && !validationRules) {
             return {
                 errorMessage: '',
                 hasError: false
