@@ -144,6 +144,87 @@ Let's create our first component
         cursor: pointer;
     `
 ```
+
+Here is a sandbox with 3 simple types of different components to show how it works
+https://codesandbox.io/embed/fragrant-bush-4gpqkl?fontsize=14&hidenavigation=1&theme=dark
+
+Below you can find some usage examples
+
+### setError
+
+```
+<Button onClick={() => setError('input', 'custom error')}>
+    set error
+</Button>
+```
+
+<p align="center">
+  <img src="https://cdn.codegate.pl/react-form-builder-v2/setError.gif" />
+</p>
+
+### setInitialValue
+
+```
+<Button onClick={() => setInitialValue('input', 'this is new initial value')}>
+    set initial value
+</Button>
+```
+
+<p align="center">
+  <img src="https://cdn.codegate.pl/react-form-builder-v2/setInitialValue.gif" />
+</p>
+
+### setFieldValue
+
+```
+<Button onClick={() => setFieldvalue('input', 'this is new value')}>
+    set field value
+</Button>
+```
+
+<p align="center">
+  <img src="https://cdn.codegate.pl/react-form-builder-v2/setFieldValue.gif" />
+</p>
+
+### addFields
+
+```
+<Button
+    onClick={() => addFields([{
+        key: 'second input',
+        placeholder: 'second input'
+    }])}
+>
+    add field
+</Button>
+```
+
+<p align="center">
+  <img src="https://cdn.codegate.pl/react-form-builder-v2/addFields.gif" />
+</p>
+
+### removeFields
+
+```
+<Button
+    onClick={() => addFields([{
+        key: 'second input',
+        placeholder: 'second input'
+    }])}
+>
+    add field
+</Button>
+<Button
+    onClick={() => removeFieldIds(['second input'])}
+>
+    remove field
+</Button>
+```
+
+<p align="center">
+  <img src="https://cdn.codegate.pl/react-form-builder-v2/removeFields.gif" />
+</p>
+
 ## Contribution
 
 Library created by [Jacek Pudysz](https://github.com/jpudysz) and [Grzegorz Tarnopolski](https://github.com/gtarnopolski)
