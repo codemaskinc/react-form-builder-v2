@@ -6,7 +6,7 @@ import { FieldConfig, GateField, InnerForm } from './types'
 
 type FormGateCallbacks<T> = {
     onSuccess(form: T): void,
-    onError?(form: T): void
+    onError?(form: Record<keyof T, string>): void
 }
 
 export function useForm<T>(

@@ -16,7 +16,7 @@ export function useField<T>({
 }: FieldConfig<T>): GateField<T> {
     const [localInitialValue, setLocalInitialValue] = useState(initialValue)
     const [field, setField] = useState<GateFieldState<T>>({
-        value: localInitialValue || '',
+        value: localInitialValue ?? '',
         isPristine: true,
         errorMessage: '',
         hasError: false
@@ -129,7 +129,7 @@ export function useField<T>({
             ...prevState,
             isPristine: true,
             errorMessage: '',
-            value: initialValue || ''
+            value: localInitialValue ?? ''
         })),
         validate: () => {
             const { hasError, errorMessage } = computeErrorMessage(undefined, true)
