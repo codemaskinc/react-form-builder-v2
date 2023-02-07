@@ -55,7 +55,7 @@ export const generateField = <T>(
         hasError: prevStateRef.current?.[fieldConfig.key]?.hasError,
         isRequired: fieldConfig.isRequired || false,
         validateOnBlur: fieldConfig.validateOnBlur || false,
-        localInitialValue: (fieldConfig.initialValue || '') as T,
+        localInitialValue: (fieldConfig.initialValue ?? '') as T,
         errorMessage: prevStateRef.current?.[fieldConfig.key]?.errorMessage,
         onChangeValue: (value: T) => setState(prevState => {
             const changedField = {
@@ -137,7 +137,7 @@ export const generateField = <T>(
                 ...prevState[fieldConfig.key],
                 isPristine: true,
                 errorMessage: '',
-                value: fieldConfig.initialValue || ''
+                value: fieldConfig.initialValue ?? ''
             }
         })),
         validate: () => {

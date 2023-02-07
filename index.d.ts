@@ -44,16 +44,16 @@ type UseFormReturn<T> = {
     submit: VoidFunction,
     validateAll: VoidFunction,
     formHasChanges(): boolean,
-    setError(field: keyof  T, errorMessage: string): void,
-    setFieldValue(field: keyof T, value: any): void,
-    setFieldInitialValue(field: keyof T, value: any): void,
+    setError(field: string, errorMessage: string): void,
+    setFieldValue(field: string, value: any): void,
+    setFieldInitialValue(field: string, value: any): void,
     addFields(fields: Array<Field>): void,
     removeFieldIds(fields: Array<string>)
 }
 
 type FormGateCallbacks<T> = {
     onSuccess(form: T): void,
-    onError?(form: T): void
+    onError?(form: Record<keyof T, string>): void
 }
 
 declare function useForm<T>(
