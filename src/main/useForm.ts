@@ -9,8 +9,8 @@ type FormGateCallbacks<T> = {
     onError?(form: Record<keyof T, string>): void
 }
 
-export function useForm<T>(
-    formFields: Record<keyof T, GateField<any>>,
+export function useForm<T extends Record<PropertyKey, GateField<any>>>(
+    formFields: T,
     callbacks: FormGateCallbacks<T>
 ) {
     const injectedForm = Object
@@ -18,7 +18,7 @@ export function useForm<T>(
         .reduce((acc, [key, value]) => ({
             ...acc,
             [key]: value
-        }), {}) as Record<keyof T, GateField<any>>
+        }), {}) as {[K in keyof T]: T[K]}
     const [innerForm, setInnerForm] = useState<InnerForm<T>>({} as InnerForm<T>)
     const innerFormRef = useRef(innerForm)
     const form = {
