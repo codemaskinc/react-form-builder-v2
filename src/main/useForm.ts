@@ -5,7 +5,7 @@ import { generateField } from './generateField'
 import { FieldConfig, GateField, InnerForm } from './types'
 
 type FormGateCallbacks<T> = {
-    onSuccess(form: T): void,
+    onSuccess(form: {[K in keyof T]: T[K] extends GateField<infer F> ? F : never}): void,
     onError?(form: Record<keyof T, string>): void
 }
 
