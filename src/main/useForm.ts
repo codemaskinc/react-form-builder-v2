@@ -164,7 +164,7 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
                     [key]: submitParser
                         ? submitParser(value)
                         : value,
-                }), {}) as T
+                }), {}) as {[K in keyof T]: T[K] extends GateField<infer F> ? F : never}
 
             callbacks.onSuccess(parsedForm)
         },
