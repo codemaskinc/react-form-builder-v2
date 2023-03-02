@@ -37,7 +37,7 @@ type FieldConfig<T> = {
 }
 
 type UseFormReturn<T> = {
-    form: Record<keyof T, Field<any>>,
+    form: T,
     hasError: boolean,
     isFilled: boolean,
     resetForm: VoidFunction,
@@ -47,17 +47,17 @@ type UseFormReturn<T> = {
     setError(field: string, errorMessage: string): void,
     setFieldValue(field: string, value: any): void,
     setFieldInitialValue(field: string, value: any): void,
-    addFields(fields: Array<Field>): void,
+    addFields(fields: Array<Field<any>>): void,
     removeFieldIds(fields: Array<string>)
 }
 
 type FormGateCallbacks<T> = {
-    onSuccess(form: T): void,
+    onSuccess(form: {[K in keyof T]: T[K] extends Field<infer F> ? F : never}): void,
     onError?(form: Record<keyof T, string>): void
 }
 
-declare function useForm<T>(
-    formFields: Record<keyof T, Field<any>>,
+declare function useForm<T extends Record<PropertyKey, Field<any>>>(
+    formFields: T,
     callbacks: FormGateCallbacks<T>
 ): UseFormReturn<T>
 
