@@ -170,6 +170,6 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
         },
         validateAll: () => Object
             .values<GateField<any>>(form)
-            .forEach(field => field.validate())
+            .some(field => field.validate())
     }
 }

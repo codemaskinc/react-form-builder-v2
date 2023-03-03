@@ -139,6 +139,8 @@ export function useField<T>({
                 errorMessage,
                 hasError
             }))
+
+            return hasError
         }
     }
 }

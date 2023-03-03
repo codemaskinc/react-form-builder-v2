@@ -151,6 +151,8 @@ export const generateField = <T>(
                     hasError
                 }
             }))
+
+            return hasError
         }
     } as ExtendedConfig<T>
 }

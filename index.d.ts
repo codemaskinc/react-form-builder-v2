@@ -42,7 +42,7 @@ type UseFormReturn<T> = {
     isFilled: boolean,
     resetForm: VoidFunction,
     submit: VoidFunction,
-    validateAll: VoidFunction,
+    validateAll(): boolean,
     formHasChanges(): boolean,
     setError(field: string, errorMessage: string): void,
     setFieldValue(field: string, value: any): void,
