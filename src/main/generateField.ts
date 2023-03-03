@@ -48,7 +48,7 @@ export const generateField = <T>(
 
     return {
         ...fieldConfig,
-        value: '',
+        value: fieldConfig.initialValue,
         hasChange: false,
         isPristine: true,
         parentKey,

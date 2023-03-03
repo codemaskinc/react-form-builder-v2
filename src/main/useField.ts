@@ -16,7 +16,7 @@ export function useField<T>({
 }: FieldConfig<T>): GateField<T> {
     const [localInitialValue, setLocalInitialValue] = useState(initialValue)
     const [field, setField] = useState<GateFieldState<T>>({
-        value: localInitialValue ?? '',
+        value: localInitialValue as T,
         isPristine: true,
         errorMessage: '',
         hasError: false

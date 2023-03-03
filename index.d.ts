@@ -47,7 +47,7 @@ type UseFormReturn<T> = {
     setError(field: string, errorMessage: string): void,
     setFieldValue(field: string, value: any): void,
     setFieldInitialValue(field: string, value: any): void,
-    addFields(fields: Array<Field<any>>): void,
+    addFields(fields: Array<FieldConfig<any>>): void,
     removeFieldIds(fields: Array<string>)
 }
 
