@@ -24,7 +24,7 @@ type Field<T> = {
     setError(errorMessage: string): void
 }
 
-type FieldConfig<T> = {
+export type FieldConfig<T> = {
     key: string,
     label?: string,
     initialValue: T,

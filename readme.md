@@ -79,7 +79,7 @@ const statesAndFunctions = useForm(config, callbacks)
 | removeFieldIds       | (ids: Array`<string>`) => void              | Removes fields from the form at runtime. Deletes only fields that were added with the "addFields" function. Fields passed in by configuration cannot be removed. |
 | resetForm            | () => void                                  | Resets all fields and forms to their initial values and states.                                                                                                  |
 | submit               | () => void                                  | Submits the form, validating all the fields that are required.                                                                                                   |
-| validateAll          | () => void                                  | Validates all fields.                                                                                                                                            |
+| validateAll          | () => boolean                               | Validates all fields. Returns if any field has error                                                                                                             |
 
 ## Usage
 
