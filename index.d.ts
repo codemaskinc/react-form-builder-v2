@@ -36,6 +36,8 @@ export type FieldConfig<T> = {
     submitParser?(value: T): T
 }
 
+type FieldValue<T, K extends keyof T> = T[K] extends Field<infer F> ? F : never
+
 type UseFormReturn<T> = {
     form: T,
     hasError: boolean,
@@ -45,14 +47,14 @@ type UseFormReturn<T> = {
     validateAll(): boolean,
     formHasChanges(): boolean,
     setError(field: string, errorMessage: string): void,
-    setFieldValue(field: string, value: any): void,
-    setFieldInitialValue(field: string, value: any): void,
+    setFieldValue<K extends keyof T | string>(field: K, value: K extends keyof T ? FieldValue<T, K> : any): void,
+    setFieldInitialValue<K extends keyof T | string>(field: K, value: K extends keyof T ? FieldValue<T, K> : any): void,
     addFields(fields: Array<FieldConfig<any>>): void,
     removeFieldIds(fields: Array<string>)
 }
 
 type FormGateCallbacks<T> = {
-    onSuccess(form: {[K in keyof T]: T[K] extends Field<infer F> ? F : never}): void,
+    onSuccess(form: {[K in keyof T]: FieldValue<T, K>}): void,
     onError?(form: Record<keyof T, string>): void
 }
 
