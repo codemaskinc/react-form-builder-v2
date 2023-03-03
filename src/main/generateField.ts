@@ -137,7 +137,7 @@ export const generateField = <T>(
                 ...prevState[fieldConfig.key],
                 isPristine: true,
                 errorMessage: '',
-                value: fieldConfig.initialValue ?? ''
+                value: fieldConfig.initialValue as T
             }
         })),
         validate: () => {

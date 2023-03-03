@@ -129,7 +129,7 @@ export function useField<T>({
             ...prevState,
             isPristine: true,
             errorMessage: '',
-            value: localInitialValue ?? ''
+            value: localInitialValue as T
         })),
         validate: () => {
             const { hasError, errorMessage } = computeErrorMessage(undefined, true)
