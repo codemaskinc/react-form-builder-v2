@@ -5,11 +5,11 @@ type ValidationRule<T> = {
     validate(value: T): boolean
 }
 
-type Field<T> = {
+type Field<T, Required extends boolean = boolean> = {
     value: T,
     key: string,
     label?: string,
-    isRequired: boolean,
+    isRequired: Required,
     hasChange: boolean,
     placeholder?: string,
     errorMessage: string,
@@ -24,11 +24,11 @@ type Field<T> = {
     setError(errorMessage: string): void
 }
 
-export type FieldConfig<T> = {
+export type FieldConfig<T, Required extends boolean = boolean> = {
     key: string,
     label?: string,
     initialValue: T,
-    isRequired: boolean,
+    isRequired: Required,
     placeholder?: string,
     validateOnBlur?: boolean,
     validationRules?: Array<ValidationRule<T>>,
@@ -36,7 +36,17 @@ export type FieldConfig<T> = {
     submitParser?(value: T): T
 }
 
+export type InferForm<T extends () => Record<string, Field<any>>> = {
+    [K in keyof ReturnType<T>]: RequiredFieldValue<ReturnType<T>, K>
+}
+
 type FieldValue<T, K extends keyof T> = T[K] extends Field<infer F> ? F : never
+
+type RequiredFieldValue<T, K extends keyof T> = T[K] extends Field<infer F>
+    ? T[K] extends Field<F, true>
+        ? NonNullable<F>
+        : F
+    : never
 
 type UseFormReturn<T> = {
     form: T,
@@ -50,11 +60,11 @@ type UseFormReturn<T> = {
     setFieldValue<K extends keyof T | string>(field: K, value: K extends keyof T ? FieldValue<T, K> : any): void,
     setFieldInitialValue<K extends keyof T | string>(field: K, value: K extends keyof T ? FieldValue<T, K> : any): void,
     addFields(fields: Array<FieldConfig<any>>): void,
-    removeFieldIds(fields: Array<string>)
+    removeFieldIds(fields: Array<string>): void
 }
 
 type FormGateCallbacks<T> = {
-    onSuccess(form: {[K in keyof T]: FieldValue<T, K>}): void,
+    onSuccess(form: {[K in keyof T]: RequiredFieldValue<T, K>}): void,
     onError?(form: Record<keyof T, string>): void
 }
 
@@ -63,7 +73,7 @@ declare function useForm<T extends Record<PropertyKey, Field<any>>>(
     callbacks: FormGateCallbacks<T>
 ): UseFormReturn<T>
 
-declare function useField<T>(props: FieldConfig<T>): Field<T>
+declare function useField<T, Required extends boolean = boolean>(props: FieldConfig<T, Required>): Field<T, Required>
 
 export {
     useForm,
