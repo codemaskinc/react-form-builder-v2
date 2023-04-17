@@ -22,8 +22,8 @@ export function useField<T>({
         hasError: false
     })
 
-    const computeErrorMessage = (value?: T, forceCheck: boolean = false) => {
-        if ((!forceCheck && field.isPristine) || !validationRules) {
+    const computeErrorMessage = (value?: T, forceCheck = false) => {
+        if ((!forceCheck && field.isPristine && !isRequired) || !validationRules) {
             return {
                 errorMessage: '',
                 hasError: false
@@ -52,9 +52,7 @@ export function useField<T>({
             .find(rule => !rule.validate(val))
 
         return {
-            errorMessage: firstError
-                ? firstError.errorMessage
-                : '',
+            errorMessage: firstError?.errorMessage ?? '',
             hasError: Boolean(firstError?.errorMessage)
         }
     }
@@ -72,14 +70,18 @@ export function useField<T>({
         errorMessage: field.errorMessage,
         onBlur: () => {
             if (validateOnBlur) {
-                const { errorMessage, hasError } = computeErrorMessage(undefined, true)
+                const { errorMessage, hasError } = computeErrorMessage()
 
-                setField(prevState => ({
-                    ...prevState,
-                    isPristine: false,
-                    errorMessage,
-                    hasError
-                }))
+                setField(prevState =>  {
+                    const isFieldEmpty = !isRequired && isEmpty(prevState.value)
+
+                    return {
+                        ...prevState,
+                        isPristine: isFieldEmpty,
+                        errorMessage: isFieldEmpty ? '' : errorMessage,
+                        hasError: isFieldEmpty ? false : hasError
+                    }
+                })
             }
         },
         onChangeValue: (newValue: T) => {
@@ -108,7 +110,7 @@ export function useField<T>({
             setLocalInitialValue(value)
         },
         validateOnSubmit: () => {
-            const { hasError, errorMessage } = computeErrorMessage(undefined, true)
+            const { hasError, errorMessage } = computeErrorMessage()
 
             setField(prevState => ({
                 ...prevState,

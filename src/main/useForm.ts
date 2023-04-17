@@ -138,19 +138,18 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
         submit: () => {
             const errors = Object
                 .values<GateField<any>>(form)
-                .map(field => {
+                .reduce<Record<string, string>>((acc, field) => {
                     const { hasError, errorMessage } = field.validateOnSubmit()
 
-                    return {
-                        key: field.key,
-                        errorMessage: errorMessage || (hasError ? 'This field is required' : '')
+                    if (!errorMessage) {
+                        return acc
                     }
-                })
-                .filter(field => Boolean(field.errorMessage))
-                .reduce((acc, { key, errorMessage}) => ({
-                    ...acc,
-                    [key]: errorMessage
-                }), {})
+
+                    return {
+                        ...acc,
+                        [field.key]: errorMessage || (hasError ? 'This field is required' : '')
+                    }
+                }, {})
             const hasErrors = Object.values(errors).length > 0
 
             if (hasErrors) {
