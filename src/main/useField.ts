@@ -100,13 +100,16 @@ export function useField<T>({
             }))
         },
         onChangeInitialValue: (value: T) => {
-            if (field.value === localInitialValue) {
-                setField(prevState => ({
-                    ...prevState,
-                    value
-                }))
-            }
+            setField(prevState => {
+                if (prevState.value === localInitialValue) {
+                    return {
+                        ...prevState,
+                        value
+                    }
+                }
 
+                return prevState
+            })
             setLocalInitialValue(value)
         },
         validateOnSubmit: () => {
