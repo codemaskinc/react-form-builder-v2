@@ -68,7 +68,7 @@ type FormGateCallbacks<T> = {
     onError?(form: Record<keyof T, string>): void
 }
 
-declare function useForm<T extends Record<PropertyKey, Field<any>>>(
+declare function useForm<T extends Record<PropertyKey, Field<any> | undefined>>(
     formFields: T,
     callbacks: FormGateCallbacks<T>
 ): UseFormReturn<T>
