@@ -36,6 +36,7 @@ export type FieldConfig<T, Required extends boolean = boolean> = {
     submitParser?(value: T): T
 }
 
+// ...args: Array<any> - otherwise typescript is mad when we pass parameters into config function
 export type InferForm<T extends (...args: Array<any>) => Record<string, Field<any> | undefined>> = {
     [K in keyof ReturnType<T>]: RequiredFieldValue<ReturnType<T>, K>
 }
