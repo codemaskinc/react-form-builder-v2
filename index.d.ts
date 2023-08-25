@@ -36,7 +36,8 @@ export type FieldConfig<T, Required extends boolean = boolean> = {
     submitParser?(value: T): T
 }
 
-export type InferForm<T extends () => Record<string, Field<any>>> = {
+// ...args: Array<any> - otherwise typescript throws an error when we pass parameters into config function
+export type InferForm<T extends (...args: Array<any>) => Record<string, Field<any> | undefined>> = {
     [K in keyof ReturnType<T>]: RequiredFieldValue<ReturnType<T>, K>
 }
 
@@ -68,7 +69,7 @@ type FormGateCallbacks<T> = {
     onError?(form: Record<keyof T, string>): void
 }
 
-declare function useForm<T extends Record<PropertyKey, Field<any>>>(
+declare function useForm<T extends Record<PropertyKey, Field<any> | undefined>>(
     formFields: T,
     callbacks: FormGateCallbacks<T>
 ): UseFormReturn<T>
