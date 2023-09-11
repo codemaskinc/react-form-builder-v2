@@ -1,42 +1,43 @@
-import React from 'react'
 import { isEmpty } from 'ramda'
 import { R } from '../lib/utils'
-import { ExtendedConfig, FieldConfig, InnerForm } from './types'
+import { ExtendedConfig, FieldConfig, GateFieldState } from './types'
 
-export const generateField = <T>(
+type GenerateFieldProps<T> = {
     fieldConfig: FieldConfig<T>,
-    prevStateRef: React.RefObject<InnerForm<T>>,
-    setState: React.Dispatch<React.SetStateAction<InnerForm<T>>>,
-    parentKey: string = ''
-): ExtendedConfig<T> => {
-    const computeErrorMessage = (field: ExtendedConfig<T>, value?: T, forceCheck = false) => {
-        if ((!forceCheck && field.isPristine && !field.isRequired) || !field.validationRules) {
+    field: GateFieldState<T> | undefined,
+    setField: React.Dispatch<React.SetStateAction<GateFieldState<T>>>,
+    parentKey?: string
+}
+
+export const generateField = <T>({
+    fieldConfig,
+    field,
+    setField,
+    parentKey = ''
+}: GenerateFieldProps<T>) => {
+    const computeErrorMessage = (value?: T | string, forceCheck = false) => {
+        if ((!forceCheck && field?.isPristine && !fieldConfig.isRequired) || !fieldConfig.validationRules) {
             return {
                 errorMessage: '',
                 hasError: false
             }
         }
 
-        const val = (R.isDefined(value)
-            ? value
-            : field.value) as T
-
-        if (field.isRequired && isEmpty(val)) {
+        if (fieldConfig.isRequired && isEmpty(value)) {
             return {
-                errorMessage: field.validationRules[0]?.errorMessage,
+                errorMessage: fieldConfig.validationRules[0]?.errorMessage ?? '',
                 hasError: true
             }
         }
 
-        if (!field.isRequired && !Boolean(val) && !field.validationRules) {
+        if (!fieldConfig.isRequired && !Boolean(value) && !fieldConfig.validationRules) {
             return {
                 errorMessage: '',
                 hasError: false
             }
         }
 
-        const firstError = field.validationRules
-            .find(rule => !rule.validate(val))
+        const firstError = fieldConfig.validationRules.find(rule => !rule.validate(value as T))
 
         return {
             errorMessage: firstError?.errorMessage ?? '',
@@ -46,113 +47,88 @@ export const generateField = <T>(
 
     return {
         ...fieldConfig,
-        value: fieldConfig.initialValue,
-        hasChange: false,
-        isPristine: true,
+        value: field?.value ?? fieldConfig.initialValue,
+        hasChange: field?.value !== field?.localInitialValue,
+        isPristine: field?.isPristine ?? true,
         parentKey,
-        hasError: prevStateRef.current?.[fieldConfig.key]?.hasError,
-        isRequired: fieldConfig.isRequired || false,
-        validateOnBlur: fieldConfig.validateOnBlur || false,
-        localInitialValue: (fieldConfig.initialValue ?? '') as T,
-        errorMessage: prevStateRef.current?.[fieldConfig.key]?.errorMessage,
-        onChangeValue: (value: T) => setState(prevState => {
-            const changedField = {
-                ...prevState[fieldConfig.key],
-                value: fieldConfig.liveParser
-                    ? fieldConfig.liveParser(value)
-                    : value,
-                hasChange: value !== prevState[fieldConfig.key]?.localInitialValue,
-                isPristine: prevState[fieldConfig.key]?.isPristine
-                    ? fieldConfig.validateOnBlur || false
-                    : prevState[fieldConfig.key].isPristine
-            }
-
-            const { errorMessage, hasError } = computeErrorMessage(changedField, value)
+        hasError: field?.hasError ?? false,
+        isRequired: fieldConfig.isRequired ?? false,
+        validateOnBlur: fieldConfig.validateOnBlur ?? false,
+        localInitialValue: fieldConfig.initialValue ?? '',
+        errorMessage: field?.errorMessage ?? '',
+        onChangeValue: (value: T) => setField(prevState => {
+            const newValue = fieldConfig.liveParser
+                ? fieldConfig.liveParser(value)
+                : value
 
             return {
                 ...prevState,
-                [fieldConfig.key]: {
-                    ...changedField,
-                    errorMessage,
-                    hasError
-                }
+                value: newValue,
+                hasChange: value !== prevState?.localInitialValue,
+                isPristine: prevState?.isPristine
+                    ? fieldConfig.validateOnBlur ?? false
+                    : prevState?.isPristine,
+                // we do not validate when there is no error and validateOnBlur is false
+                ...fieldConfig.validateOnBlur && !prevState.hasError ? {} : computeErrorMessage(newValue, true)
             }
         }),
         onBlur: () => {
-            if (fieldConfig.validateOnBlur) {
-                const { errorMessage, hasError } = computeErrorMessage(prevStateRef.current?.[fieldConfig.key] as ExtendedConfig<T>)
-
-                setState(prevState => {
-                    const field = prevState[fieldConfig.key]
-                    const isFieldEmpty = !field.isRequired && isEmpty(field.value)
-
-                    return {
-                        ...prevState,
-                        [fieldConfig.key]: {
-                            ...field,
-                            isPristine: isFieldEmpty,
-                            errorMessage: isFieldEmpty ? '' : errorMessage,
-                            hasError: isFieldEmpty ? false : hasError
-                        }
-                    }
-                })
+            if (!fieldConfig.validateOnBlur) {
+                return
             }
+
+            const { hasError, errorMessage } = computeErrorMessage(field?.value, true)
+            const isFieldEmpty = !fieldConfig.isRequired && isEmpty(field?.value)
+
+            setField(prevState => ({
+                ...prevState,
+                isPristine: isFieldEmpty,
+                errorMessage: isFieldEmpty ? '' : errorMessage,
+                hasError: isFieldEmpty ? false : hasError
+            }))
         },
         validateOnSubmit: () => {
-            const { errorMessage, hasError } = computeErrorMessage(prevStateRef.current?.[fieldConfig.key] as ExtendedConfig<T>)
+            const { hasError, errorMessage } = computeErrorMessage(field?.value, true)
 
-            setState(prevState => ({
+            setField(prevState => ({
                 ...prevState,
-                [fieldConfig.key]: {
-                    ...prevState[fieldConfig.key],
-                    errorMessage,
-                    hasError
-                }
+                errorMessage,
+                hasError
             }))
 
             return {
-                errorMessage,
-                hasError
+                hasError,
+                errorMessage
             }
         },
         onChangeInitialValue: (value: T) => {
-            if (prevStateRef.current?.value === prevStateRef.current?.localInitialValue) {
-                setState(prevState => ({
-                    ...prevState,
-                    [fieldConfig.key]: {
-                        ...prevState[fieldConfig.key],
-                        value,
-                        localInitialValue: value
-                    }
-                }))
+            if (field?.localInitialValue === value) {
+                return
             }
+
+            setField(prevState => ({
+                ...prevState,
+                localInitialValue: value
+            }))
         },
-        setError: (errorMessage: string) => setState(prevState => ({
+        setError: (errorMessage: string) => setField(prevState => ({
             ...prevState,
-            [fieldConfig.key]: {
-                ...prevState[fieldConfig.key],
-                errorMessage
-            }
+            errorMessage,
+            hasError: Boolean(errorMessage)
         })),
-        resetState: () => setState(prevState => ({
+        resetState: () => setField(prevState => ({
             ...prevState,
-            [fieldConfig.key]: {
-                ...prevState[fieldConfig.key],
-                isPristine: true,
-                errorMessage: '',
-                value: fieldConfig.initialValue as T
-            }
+            isPristine: true,
+            errorMessage: '',
+            value: fieldConfig.initialValue as T
         })),
         validate: () => {
-            const { hasError, errorMessage } = computeErrorMessage(prevStateRef.current?.[fieldConfig.key] as ExtendedConfig<T>, undefined, true)
+            const { hasError, errorMessage } = computeErrorMessage(field?.value, true)
 
-            setState(prevState => ({
+            setField(prevState => ({
                 ...prevState,
-                [fieldConfig.key]: {
-                    ...prevState[fieldConfig.key],
-                    errorMessage,
-                    hasError
-                }
+                errorMessage,
+                hasError
             }))
 
             return hasError

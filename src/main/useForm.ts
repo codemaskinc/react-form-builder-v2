@@ -65,7 +65,7 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
                     [key]: field
                 }
             }, {})
-    }
+    } as T & Partial<Record<string, GateField<any>>>
 
     const hasError = Object
         .values<GateField<any>>(form)
@@ -81,7 +81,24 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
         }
 
         return {
-            [field.key]: generateField(field, innerFormRef, setInnerForm, parentKey)
+            [field.key]: generateField({
+                fieldConfig: field,
+                field: innerFormRef[field.key],
+                parentKey,
+                setField: getNewState => {
+                    if (typeof getNewState !== 'function') {
+                        return
+                    }
+
+                    setInnerForm(prevState => ({
+                        ...prevState,
+                        [field.key]: {
+                            ...innerFormRef.current[field.key],
+                            ...getNewState(innerFormRef.current[field.key])
+                        }
+                    }))
+                }
+            })
         }
     }
 

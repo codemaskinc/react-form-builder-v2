@@ -9,6 +9,7 @@ export type GateFieldState<T> = {
     value: T | string,
     isPristine: boolean,
     errorMessage: string,
+    localInitialValue: T,
     hasError: boolean
 }
 
