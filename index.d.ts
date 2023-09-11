@@ -49,8 +49,9 @@ type RequiredFieldValue<T, K extends keyof T> = T[K] extends Field<infer F>
         : F
     : never
 
-type UseFormReturn<T> = {
-    form: T,
+type UseFormReturn<T extends Record<PropertyKey, Field<any> | undefined>> = {
+    // If we are using dynamic form we need that Partial to be able to access any key of the form
+    form: T & Partial<Record<string, Field<any>>>,
     hasError: boolean,
     isFilled: boolean,
     resetForm: VoidFunction,
