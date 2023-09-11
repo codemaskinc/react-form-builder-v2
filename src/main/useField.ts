@@ -85,8 +85,6 @@ export function useField<T>({
             }
         },
         onChangeValue: (newValue: T) => {
-            const { hasError, errorMessage } = computeErrorMessage(newValue, !validateOnBlur)
-
             setField(prevState => ({
                 ...prevState,
                 value: liveParser
@@ -95,8 +93,7 @@ export function useField<T>({
                 isPristine: prevState.isPristine
                     ? validateOnBlur
                     : prevState.isPristine,
-                errorMessage,
-                hasError
+                ...validateOnBlur && !prevState.hasError ? {} : computeErrorMessage(newValue, true)
             }))
         },
         onChangeInitialValue: (value: T) => {
