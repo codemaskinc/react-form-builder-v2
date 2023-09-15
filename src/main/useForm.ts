@@ -112,7 +112,7 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
         isFilled: Object
             .values<GateField<any>>(form)
             .filter(item => item.isRequired)
-            .every(item => !isEmpty(item.value)),
+            .every(item => Boolean(item.value) && !isEmpty(item.value)),
         formHasChanges: () => Object
             .values<GateField<any>>(form)
             .some(field => field.hasChange),
