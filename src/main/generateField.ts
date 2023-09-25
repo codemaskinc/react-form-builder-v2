@@ -88,7 +88,7 @@ export const generateField = <T>({
             }))
         },
         validateOnSubmit: () => {
-            const { hasError, errorMessage } = computeErrorMessage(field?.value, true)
+            const { hasError, errorMessage } = computeErrorMessage(field?.value)
 
             setField(prevState => ({
                 ...prevState,

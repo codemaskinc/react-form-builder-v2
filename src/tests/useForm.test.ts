@@ -1,5 +1,7 @@
-import { renderHook } from '@testing-library/react-hooks'
+import { act, renderHook } from '@testing-library/react-hooks'
+import { jest } from '@jest/globals'
 import { useField, useForm } from '../main'
+import { rules } from './testUtils'
 
 type FieldConfig = {
     isRequired: boolean,
@@ -11,7 +13,7 @@ type TestCase = {
     fieldConfig: FieldConfig
 }
 
-describe('useForm', () => {
+describe('useForm - isFilled', () => {
     const formFields: Array<TestCase> = [
             {
                 expect: false,
@@ -114,5 +116,45 @@ describe('useForm', () => {
 
             expect(result.current.isFilled).toBe(testCase.expect)
         })
+    })
+})
+
+describe('useForm - submit form', () => {
+    const useConfig = () => {
+        const field = useField({
+            key: 'field',
+            initialValue: '',
+            isRequired: true,
+            validationRules: [ rules.empty ]
+        })
+
+        const nonRequired = useField({
+            key: 'nonRequired',
+            initialValue: '',
+            isRequired: false,
+            validationRules: [ rules.empty ]
+        })
+
+        return {
+            field,
+            nonRequired
+        }
+    }
+
+    test('One field is required, the other one is not', () => {
+        const callback = jest.fn()
+        const { result } = renderHook(() => useForm(useConfig(), {
+            onSuccess: callback
+        }))
+
+        act(() => {
+            result.current.form.field.onChangeValue('test')
+        })
+
+        act(() => {
+            result.current.submit()
+        })
+
+        expect(callback).toBeCalled()
     })
 })
