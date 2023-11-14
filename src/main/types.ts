@@ -54,11 +54,18 @@ export type GateField<T> = {
 }
 
 export type ExtendedConfig<T> = GateField<T> & {
-    key: string,
     localInitialValue: T,
     isPristine: boolean,
     validationRules: Array<ValidationRule<T>>,
     validateOnBlur: boolean
 }
 
-export type InnerForm<T> = Record<string, ExtendedConfig<T>>
+export type Form = Record<PropertyKey, GateField<any>>
+
+export type InnerForm<T extends Form> = {[K in keyof T]: ExtendedConfig<T[K]['value']>}
+
+export type DynamicForm<T extends Form> = T & Partial<Form>
+
+type ExtractGateField<T> = T extends GateField<infer V> ? V : never
+
+export type ExtractForm<T extends Form> = {[K in keyof T]: ExtractGateField<T[K]>}

@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import { isEmpty } from 'ramda'
 import { R } from 'lib/utils'
 import { generateField } from './generateField'
-import { ChildrenFieldConfig, GateField, InnerForm } from './types'
+import { ChildrenFieldConfig, DynamicForm, ExtendedConfig, ExtractForm, FieldConfig, Form, GateField, InnerForm } from './types'
 
-type FormGateCallbacks<T> = {
-    onSuccess(form: {[K in keyof T]: T[K] extends GateField<infer F> ? F : never}): void,
+type FormGateCallbacks<T extends Form> = {
+    onSuccess(form: ExtractForm<T>): void,
     onError?(form: Record<keyof T, string>): void
 }
 
-export function useForm<T extends Record<PropertyKey, GateField<any>>>(
+export function useForm<T extends Form>(
     formFields: T,
     callbacks: FormGateCallbacks<T>
 ) {
@@ -24,7 +24,7 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
     const form = {
         ...injectedForm,
         ...Object
-            .entries<GateField<any>>(innerForm)
+            .entries(innerForm)
             .reduce((acc, [key, field]) => {
                 const fieldKeys = field.parentKey
                     .split('.')
@@ -32,27 +32,29 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
 
                 if (fieldKeys.length > 0) {
                     const mappedField = fieldKeys
-                        .reduce((localAcc, localKey, index) => ({
-                            ...acc,
-                            ...localAcc,
-                            [localKey]: {
-                                ...acc[localKey],
-                                ...(localAcc[localKey] || {}),
-                                ...(index === fieldKeys.length - 1 ? {
-                                    children: [
-                                        ...(localAcc[localKey]?.children || []),
-                                        field
-                                    ]
-                                } : {})
+                        .reduce((localAcc, localKey, index) => {
+                            return {
+                                ...acc,
+                                ...localAcc,
+                                [localKey]: {
+                                    ...acc[localKey],
+                                    ...(localAcc[localKey] || {}),
+                                    ...(index === fieldKeys.length - 1 ? {
+                                        children: [
+                                            ...(localAcc[localKey]?.children || []),
+                                            field
+                                        ]
+                                    } : {})
+                                }
                             }
-                        }), {})
+                        }, {} as FieldConfig<any>)
                     const removeEmptyObjects = Object
                         .keys(mappedField)
                         .filter(key => Object.keys(mappedField[key]).length)
                         .reduce((acc, key) => ({
                             ...acc,
                             [key]: mappedField[key]
-                        }), {})
+                        }), {} as Record<string, FieldConfig<any>>)
 
                     return {
                         ...acc,
@@ -64,20 +66,20 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
                     ...acc,
                     [key]: field
                 }
-            }, {})
-    } as T & Partial<Record<string, GateField<any>>>
+            }, {} as Record<string, FieldConfig<any>>)
+    } as DynamicForm<T>
 
     const hasError = Object
-        .values<GateField<any>>(form)
+        .values(form)
         .filter(item => item.isRequired)
         .some(item => Boolean(item.errorMessage))
 
-    const addFieldsRecurrence = (field: ChildrenFieldConfig<any>, parentKey: string): any => {
+    const addFieldsRecurrence = (field: ChildrenFieldConfig<any>, parentKey: string): Record<string, ExtendedConfig<any>> => {
         if (field.children) {
             return field.children.reduce((acc, child) => ({
                 ...acc,
                 ...addFieldsRecurrence(child, `${parentKey}.${field.key}`)
-            }), {})
+            }), {} as Record<string, ExtendedConfig<any>>)
         }
 
         return {
@@ -185,12 +187,12 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
                             ? submitParser(value)
                             : value,
                     }
-                }, {}) as {[K in keyof T]: T[K] extends GateField<infer F> ? F : never}
+                }, {} as ExtractForm<T>)
 
             callbacks.onSuccess(parsedForm)
         },
         validateAll: () => Object
-            .values<GateField<any>>(form)
+            .values(form)
             .some(field => field.validate())
     }
 }
