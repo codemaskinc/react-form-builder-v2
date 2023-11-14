@@ -1,5 +1,4 @@
 import { isEmpty } from 'ramda'
-import { R } from '../lib/utils'
 import { ExtendedConfig, FieldConfig, GateFieldState } from './types'
 
 type GenerateFieldProps<T> = {
@@ -133,5 +132,5 @@ export const generateField = <T>({
 
             return hasError
         }
-    } as ExtendedConfig<T>
+    } as unknown as ExtendedConfig<T>
 }

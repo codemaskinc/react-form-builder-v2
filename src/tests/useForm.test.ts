@@ -101,7 +101,6 @@ describe('useForm - isFilled', () => {
         test(JSON.stringify(testCase), () => {
             const { isRequired, initialValue } = testCase.fieldConfig
             const { result: field } = renderHook(() => useField({
-                key: 'test',
                 initialValue,
                 isRequired
             }))
@@ -122,14 +121,12 @@ describe('useForm - isFilled', () => {
 describe('useForm - submit form', () => {
     const useConfig = () => {
         const field = useField({
-            key: 'field',
             initialValue: '',
             isRequired: true,
             validationRules: [ rules.empty ]
         })
 
         const nonRequired = useField({
-            key: 'nonRequired',
             initialValue: '',
             isRequired: false,
             validationRules: [ rules.empty ]
