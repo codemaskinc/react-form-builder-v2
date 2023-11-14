@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { isEmpty } from 'ramda'
 import { R } from 'lib/utils'
 import { generateField } from './generateField'
-import { FieldConfig, GateField, InnerForm } from './types'
+import { ChildrenFieldConfig, GateField, InnerForm } from './types'
 
 type FormGateCallbacks<T> = {
     onSuccess(form: {[K in keyof T]: T[K] extends GateField<infer F> ? F : never}): void,
@@ -72,7 +72,7 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
         .filter(item => item.isRequired)
         .some(item => Boolean(item.errorMessage))
 
-    const addFieldsRecurrence = (field: FieldConfig<any>, parentKey: string): any => {
+    const addFieldsRecurrence = (field: ChildrenFieldConfig<any>, parentKey: string): any => {
         if (field.children) {
             return field.children.reduce((acc, child) => ({
                 ...acc,
@@ -129,7 +129,7 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
         setFieldInitialValue: (field: keyof T, value: any) => {
             form[field].onChangeInitialValue(value)
         },
-        addFields: (fields: Array<FieldConfig<any>>) => setInnerForm(prevState => ({
+        addFields: (fields: Array<ChildrenFieldConfig<any>>) => setInnerForm(prevState => ({
             ...prevState,
             ...fields.reduce((acc, item) => ({
                 ...acc,
@@ -154,8 +154,9 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
             .forEach(key => (form[key] as GateField<any>).resetState()),
         submit: () => {
             const errors = Object
-                .values<GateField<any>>(form)
-                .reduce<Record<string, string>>((acc, field) => {
+                .keys(form)
+                .reduce<Record<string, string>>((acc, fieldKey) => {
+                    const field = form[fieldKey] as GateField<any>
                     const { hasError, errorMessage } = field.validateOnSubmit()
 
                     if (!errorMessage) {
@@ -164,7 +165,7 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
 
                     return {
                         ...acc,
-                        [field.key]: errorMessage || (hasError ? 'This field is required' : '')
+                        [fieldKey]: errorMessage || (hasError ? 'This field is required' : '')
                     }
                 }, {})
             const hasErrors = Object.values(errors).length > 0
@@ -174,13 +175,17 @@ export function useForm<T extends Record<PropertyKey, GateField<any>>>(
             }
 
             const parsedForm = Object
-                .values<GateField<any>>(form)
-                .reduce((acc, { key, value, submitParser }) => ({
-                    ...acc,
-                    [key]: submitParser
-                        ? submitParser(value)
-                        : value,
-                }), {}) as {[K in keyof T]: T[K] extends GateField<infer F> ? F : never}
+                .keys(form)
+                .reduce((acc, fieldKey) => {
+                    const { value, submitParser } = form[fieldKey] as GateField<any>
+
+                    return {
+                        ...acc,
+                        [fieldKey]: submitParser
+                            ? submitParser(value)
+                            : value,
+                    }
+                }, {}) as {[K in keyof T]: T[K] extends GateField<infer F> ? F : never}
 
             callbacks.onSuccess(parsedForm)
         },

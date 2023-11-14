@@ -5,18 +5,17 @@ type ValidationRule<T> = {
     validate(value: T): boolean
 }
 
-type Field<T, Required extends boolean = boolean> = {
+type Field<T, TRequired extends boolean = boolean> = {
     value: T,
-    key: string,
     label?: string,
-    isRequired: Required,
+    isRequired: TRequired,
     hasChange: boolean,
     placeholder?: string,
     errorMessage: string,
     onBlur: VoidFunction,
     resetState: VoidFunction,
     validate: VoidFunction,
-    children?: Array<Field<T>>,
+    children?: Array<ChildrenField<T>>,
     hasError: boolean,
     validateOnSubmit(): string,
     onChangeValue(newValue: T): void,
@@ -24,8 +23,11 @@ type Field<T, Required extends boolean = boolean> = {
     setError(errorMessage: string): void
 }
 
+type ChildrenField<T, TRequired extends boolean = boolean> = Field<T, TRequired> & {
+    key: string
+}
+
 export type FieldConfig<T, Required extends boolean = boolean> = {
-    key: string,
     label?: string,
     initialValue: T,
     isRequired: Required,
@@ -34,6 +36,10 @@ export type FieldConfig<T, Required extends boolean = boolean> = {
     validationRules?: Array<ValidationRule<T>>,
     liveParser?(value: T): T,
     submitParser?(value: T): T
+}
+
+export type ChildrenFieldConfig<T, Required extends boolean = boolean> = FieldConfig<T, Required> & {
+    key: string
 }
 
 // ...args: Array<any> - otherwise typescript throws an error when we pass parameters into config function
@@ -59,9 +65,9 @@ type UseFormReturn<T extends Record<PropertyKey, Field<any> | undefined>> = {
     validateAll(): boolean,
     formHasChanges(): boolean,
     setError(field: string, errorMessage: string): void,
-    setFieldValue<K extends keyof T | string>(field: K, value: K extends keyof T ? FieldValue<T, K> : any): void,
-    setFieldInitialValue<K extends keyof T | string>(field: K, value: K extends keyof T ? FieldValue<T, K> : any): void,
-    addFields(fields: Array<FieldConfig<any>>): void,
+    setFieldValue<K extends keyof T | (string & {})>(field: K, value: K extends keyof T ? FieldValue<T, K> : any): void,
+    setFieldInitialValue<K extends keyof T | (string & {})>(field: K, value: K extends keyof T ? FieldValue<T, K> : any): void,
+    addFields(fields: Array<ChildrenFieldConfig<any>>): void,
     removeFieldIds(fields: Array<string>): void
 }
 

@@ -90,7 +90,6 @@ describe('useField', () => {
     testsCases.forEach(testCase => {
         test(JSON.stringify(testCase), () => {
             const { result } = renderHook(() => useField({
-                key: 'test',
                 initialValue: '',
                 isRequired: testCase.required,
                 validateOnBlur: testCase.validateOnBlur,
@@ -117,7 +116,6 @@ describe('useField', () => {
 
     test('Test if field gets pristine after correct value has been passed', () => {
         const { result } = renderHook(() => useField({
-            key: 'test',
             initialValue: '',
             isRequired: true,
             validateOnBlur: true,

@@ -14,22 +14,19 @@ export type GateFieldState<T> = {
 }
 
 export type FieldConfig<T> = {
-    key: string,
     label?: string,
     initialValue?: T,
     isRequired?: boolean,
     placeholder?: string,
     validateOnBlur?: boolean,
     validationRules?: Array<ValidationRule<T>>,
-    children?: Array<FieldConfig<T>>,
+    children?: Array<ChildrenFieldConfig<T>>,
     liveParser?(value: T): T,
     submitParser?(value: T): T
 }
 
-export type FormFieldLike = {
-    value: any,
-    isRequired: boolean,
-    errorMessage: string
+export type ChildrenFieldConfig<T> = FieldConfig<T> & {
+    key: string
 }
 
 type ValidateOnSubmitProps = {
@@ -39,7 +36,6 @@ type ValidateOnSubmitProps = {
 
 export type GateField<T> = {
     value: T | string,
-    key: string,
     label?: string,
     isRequired: boolean,
     hasChange: boolean,
@@ -57,12 +53,8 @@ export type GateField<T> = {
     setError(errorMessage: string): void
 }
 
-export type SinglePickerOption = {
-    key: string,
-    value: any
-}
-
 export type ExtendedConfig<T> = GateField<T> & {
+    key: string,
     localInitialValue: T,
     isPristine: boolean,
     validationRules: Array<ValidationRule<T>>,
