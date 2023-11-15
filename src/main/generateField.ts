@@ -47,14 +47,14 @@ export const generateField = <T>({
     return {
         ...fieldConfig,
         validationRules: fieldConfig.validationRules ?? [],
-        value: field?.value ?? fieldConfig.initialValue as T,
+        value: field?.value ?? fieldConfig.initialValue,
         hasChange: field?.value !== field?.localInitialValue,
         isPristine: field?.isPristine ?? true,
         parentKey,
         hasError: field?.hasError ?? false,
         isRequired: fieldConfig.isRequired ?? false,
         validateOnBlur: fieldConfig.validateOnBlur ?? false,
-        localInitialValue: fieldConfig.initialValue ?? '' as T,
+        localInitialValue: fieldConfig.initialValue ?? '',
         errorMessage: field?.errorMessage ?? '',
         onChangeValue: (value: T) => setField(prevState => {
             const newValue = fieldConfig.liveParser
