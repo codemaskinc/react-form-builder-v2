@@ -119,8 +119,9 @@ export const generateField = <T>({
         resetState: () => setField(prevState => ({
             ...prevState,
             isPristine: true,
+            hasError: false,
             errorMessage: '',
-            value: fieldConfig.initialValue as T
+            value: prevState.localInitialValue
         })),
         validate: () => {
             const { hasError, errorMessage } = computeErrorMessage(field?.value, true)
