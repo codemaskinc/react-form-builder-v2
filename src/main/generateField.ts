@@ -47,7 +47,7 @@ export const generateField = <T>({
     return {
         ...fieldConfig,
         validationRules: fieldConfig.validationRules ?? [],
-        value: field?.value ?? fieldConfig.initialValue,
+        value: field ? field.value : fieldConfig.initialValue,
         hasChange: field?.value !== field?.localInitialValue,
         isPristine: field?.isPristine ?? true,
         parentKey,
