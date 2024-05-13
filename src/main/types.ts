@@ -34,6 +34,11 @@ type ValidateOnSubmitProps = {
     errorMessage: string
 }
 
+type ComputedErrorMessage = {
+    hasError: boolean,
+    errorMessage: string
+}
+
 export type GateField<T> = {
     value: T | string,
     label?: string,
@@ -50,14 +55,15 @@ export type GateField<T> = {
     submitParser?(value: T): T,
     onChangeInitialValue(value: T): void,
     resetState(): void,
-    setError(errorMessage: string): void
+    setError(errorMessage: string): void,
+    computeErrorMessage(value: T): ComputedErrorMessage
 }
 
 export type ExtendedConfig<T> = GateField<T> & {
     localInitialValue: T,
     isPristine: boolean,
     validationRules: Array<ValidationRule<T>>,
-    validateOnBlur: boolean
+    validateOnBlur: boolean,
 }
 
 export type Form = Record<PropertyKey, GateField<any>>

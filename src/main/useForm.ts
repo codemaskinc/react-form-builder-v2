@@ -115,6 +115,10 @@ export function useForm<T extends Form>(
             .values<GateField<any>>(form)
             .filter(item => item.isRequired)
             .every(item => Boolean(item.value) && !isEmpty(item.value)),
+        isValid: Object
+            .values<GateField<any>>(form)
+            .filter(item => item.isRequired)
+            .every(item => Boolean(item.value) && !isEmpty(item.value) && item.computeErrorMessage(item.value).hasError === false),
         formHasChanges: () => Object
             .values<GateField<any>>(form)
             .some(field => field.hasChange),
