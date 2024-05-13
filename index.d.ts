@@ -60,6 +60,7 @@ type UseFormReturn<T extends Record<PropertyKey, Field<any> | undefined>> = {
     form: T & Partial<Record<string, Field<any>>>,
     hasError: boolean,
     isFilled: boolean,
+    isValid: boolean,
     resetForm: VoidFunction,
     submit: VoidFunction,
     validateAll(): boolean,
