@@ -133,6 +133,7 @@ export const generateField = <T>({
             }))
 
             return hasError
-        }
+        },
+        computeErrorMessage: (value: T) => computeErrorMessage(value, true)
     } as unknown as ExtendedConfig<T>
 }
